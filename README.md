@@ -1,16 +1,19 @@
-[![Issues](https://img.shields.io/github/issues/reoccurcat/reoccurcord.svg?colorB=5e03fc)](https://github.com/reoccurcat/reoccurcord/issues)
+[![Issues](https://img.shields.io/github/issues/reoccurdevs/reoccurcord.svg?colorB=5e03fc)](https://github.com/reoccurcat/reoccurcord/issues)
 [![Site Status](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=purple&up_message=online&url=https%3A%2F%2Frc.reoccur.tech)](https://rc.reoccur.tech)
-[![Stars](https://img.shields.io/github/stars/reoccurcat/reoccurcord?style=social)](https://github.com/reoccurcat/reoccurcord/stargazers)
+[![Stars](https://img.shields.io/github/stars/reoccurdevs/reoccurcord?style=social)](https://github.com/reoccurcat/reoccurcord/stargazers)
 [![Discord](https://img.shields.io/discord/867833814415179796)](https://discord.gg/xev3FrVJZG)
-[![License](https://img.shields.io/github/license/reoccurcat/reoccurcord)](https://github.com/reoccurcat/reoccurcord/blob/main/LICENSE)
-[![Commits](https://img.shields.io/github/commit-activity/m/reoccurcat/reoccurcord)](https://github.com/reoccurcat/reoccurcord/commits/main)
+[![License](https://img.shields.io/github/license/reoccurdevs/reoccurcord)](https://github.com/reoccurdevs/reoccurcord/blob/main/LICENSE)
+[![Commits](https://img.shields.io/github/commit-activity/m/reoccurdevs/reoccurcord)](https://github.com/reoccurdevs/reoccurcord/commits/main)
 ![Maintained](https://img.shields.io/maintenance/no/2021)
-[![CodeFactor](https://www.codefactor.io/repository/github/reoccurcat/reoccurcord/badge)](https://www.codefactor.io/repository/github/reoccurcat/reoccurcord)
 
-# reoccurcord
+# reoccurcord 
+
+# THIS PROJECT IS DEPRECIATED
+Please do not use this project anymore. Instead, use [autumncord](https://github.com/reoccurdevs/autumncord).
+
 ## Welcome to the official GitHub page of the reoccurcord bot!
 reoccurcord is a Discord bot made formerly by the reoccurdevs team but taken over by the last dev that worked on it that you can edit and self host. If you want to fork it and make a new bot, that's fine, but please give us credit. :)
-If you find an issue, or have a feature suggestion, please let us know by opening an issue [here](https://github.com/reoccurcat/reoccurcord/issues).
+If you find an issue, or have a feature suggestion, please let us know by opening an issue [here](https://github.com/reoccurdevs/reoccurcord/issues).
 
 ## Documentation
 
@@ -37,15 +40,7 @@ There are many features of the bot. These features include:
 - Self updating feature
 - Lots more commands, and more commands being added regularly!
 
-You can find the support server here:
-
-[![Join our Discord server!](https://invidget.switchblade.xyz/xev3FrVJZG)](http://discord.gg/xev3FrVJZG)
-
-You can invite the main bot instance here:
-
-[Main Bot Invite Link](https://rc.reoccur.tech/invite)
-
-Like earlier said, if you have any feature requests or issues with the bot, open an issue [here](https://github.com/reoccurcat/reoccurcord/issues)!
+Like earlier said, if you have any feature requests or issues with the bot, open an issue [here](https://github.com/reoccurdevs/reoccurcord/issues)!
 Enjoy the bot! We hope you have as much fun with it as we had programming it! :)
 
 Made with discord.py v9.
