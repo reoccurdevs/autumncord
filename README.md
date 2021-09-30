@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/discord/867833814415179796)](https://discord.gg/xev3FrVJZG)
 [![License](https://img.shields.io/github/license/reoccurcat/reoccurcord)](https://github.com/reoccurcat/reoccurcord/blob/main/LICENSE)
 [![Commits](https://img.shields.io/github/commit-activity/m/reoccurcat/reoccurcord)](https://github.com/reoccurcat/reoccurcord/commits/main)
-![Maintained](https://img.shields.io/maintenance/yes/2021)
+![Maintained](https://img.shields.io/maintenance/no/2021)
 [![CodeFactor](https://www.codefactor.io/repository/github/reoccurcat/reoccurcord/badge)](https://www.codefactor.io/repository/github/reoccurcat/reoccurcord)
 
 # reoccurcord
