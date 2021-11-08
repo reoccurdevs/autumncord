@@ -19,10 +19,10 @@ If you find an issue, or have a feature suggestion, please let us know by openin
 1. Clone the repository: `git clone https://github.com/reoccurdevs/reoccurcord.git` and go to step 2. An alternative is to download the ZIP file, unzip it, shift + right click in the `reoccurcord-main` folder, click on `Open Powershell window here`, and continue with step 3.
 2. `cd` to the repository folder: `cd reoccurcord`.
 3. Make sure all the dependencies are installed: `python -m pip install discord.py requests asyncio gitpython psutil datetime bs4 jishaku nudenet tensorflow-cpu` If there are any other errors with importing dependencies, install them as necessary.
-4. Run `python3 setup.py` for a configuration creator. If you don't do this, the bot will not run.
+4. Run `python setup.py` for a configuration creator. If you fail to do this, the bot will not run.
 5. Before starting, make sure the Server Members Intent is enabled in your bot settings in the Discord Developer Portal.
 6. To make sure the `mute` and `unmute` commands work, please make a role called `muted` in your server. The bot will not (yet) do this for you. After you create the role, make sure to create overrides for the channels you don't want a muted user speaking in.
-7. Run the main bot file: `python3 start.py` (or see the commands with `python3 start.py --help`).
+7. Run the main bot file: `python start.py` (or see the commands with `python3 start.py --help`).
 
 ### Features
 
