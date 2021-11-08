@@ -25,25 +25,25 @@ def startbot():
 def botupdate():
     if sys.platform == "linux" or sys.platform == "linux2":
         try:
-            os.mkdir('./tmp/freeupdate')
+            os.mkdir('./tmp/reoccurupdate')
         except FileNotFoundError:
-            os.rmdir('./tmp/freeupdate')
-            os.mkdir('./tmp/freeupdate')
+            os.rmdir('./tmp/reoccurupdate')
+            os.mkdir('./tmp/reoccurupdate')
         HTTPS_REMOTE_URL = globalconfig.github_login_url
-        DEST_NAME = './tmp/freeupdate'
+        DEST_NAME = './tmp/reoccurupdate'
         cloned_repo = Repo.clone_from(HTTPS_REMOTE_URL, DEST_NAME)
         dir_path = os.getcwd()
         shutil.rmtree(dir_path + "/cogs/")
         path = dir_path
-        src = './tmp/freeupdate/cogs'
+        src = './tmp/reoccurupdate/cogs'
         dest = dir_path + "/cogs"
         destination = shutil.copytree(src, dest)
-        copyfile('./tmp/freeupdate/bot.py', dir_path + '/bot.py')
-        copyfile('./tmp/freeupdate/setup.py', dir_path + '/setup.py')
-        copyfile('./tmp/freeupdate/README.md', dir_path + '/README.md')
-        copyfile('./tmp/freeupdate/globalconfig.py', dir_path + '/globalconfig.py')
-        copyfile('./tmp/freeupdate/start.py', dir_path + '/start.py')
-        shutil.rmtree('./tmp/freeupdate')
+        copyfile('./tmp/reoccurupdate/bot.py', dir_path + '/bot.py')
+        copyfile('./tmp/reoccurupdate/setup.py', dir_path + '/setup.py')
+        copyfile('./tmp/reoccurupdate/README.md', dir_path + '/README.md')
+        copyfile('./tmp/reoccurupdate/globalconfig.py', dir_path + '/globalconfig.py')
+        copyfile('./tmp/reoccurupdate/start.py', dir_path + '/start.py')
+        shutil.rmtree('./tmp/reoccurupdate')
         print("Done! Restart the bot to apply the changes!")
     elif sys.platform == "win32":
         print("`updatebot` is not yet available for Windows.")
@@ -70,7 +70,7 @@ if "--help" in sys.argv[1]:
     elif sys.argv[2] == "crash":
         sys.exit("reoccurcord Start Script\npython3 start.py --updatebot\nUpdates the reoccurcord instance.")
     elif sys.argv[2] == "credits":
-        sys.exit("redev's CrashDash\npython3 start.py --credits\nShows the credits of reoccurcord.")
+        sys.exit("reoccurcord Start Script\npython3 start.py --credits\nShows the credits of reoccurcord.")
 
 if "--updatebot" in sys.argv[1]:
     botupdate()

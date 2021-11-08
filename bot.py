@@ -23,7 +23,7 @@ else:
     storetoken = input("Please enter your token: ")
     storeid = input("\nPlease enter your User ID: ")
     print()
-    write = f"token = '{storetoken}'\nownerID = '{storeid}'\nsetupneeded = True"
+    write = f"bot_token = '{storetoken}'\nownerID = '{storeid}'\nsetupneeded = True"
     with open("config.py", "w") as f:
         f.write(write)
     import config
@@ -242,16 +242,16 @@ async def on_ready():
             em = discord.Embed(title="Required Variables", description="Bot Prefix: `in progress`\nDate Format: `pending`", color=discord.Color.purple())
             em.set_author(name="reoccurcord setup utility", icon_url="https://rc.reoccur.tech/assets/icon.gif")
             em.add_field(name="Directions", value="Please send a message that contains the bot prefix.")
-            msg = await ctx.send(embed=em)
-            def check(message: discord.Message):
+            msg = await user.send(embed=em)
+            def check(ctx, message: discord.Message):
                 return ctx.author == message.author
-            userinput = await self.bot.wait_for('message', check=check)
+            userinput = await bot.wait_for('message', check=check)
             em = discord.Embed(title="Required Variables", description="Bot Prefix: `in progress`\nDate Format: `pending`", color=discord.Color.purple())
             em.set_author(name="reoccurcord setup utility", icon_url="https://rc.reoccur.tech/assets/icon.gif")
             em.add_field(name="Directions", value=f"Verify this is correct:\n||`{userinput.content}`||")
             await msg.add_reaction("❌")
             await msg.add_reaction("✅")
-            def check(reaction, user):
+            def check(ctx, reaction, user, message: discord.Message):
                 return ctx.author == message.author
             reaction, user = await bot.wait_for('message', check=check)
             if str(reaction.emoji) == "✅":
