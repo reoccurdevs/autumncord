@@ -253,7 +253,7 @@ class Fun(commands.Cog):
                         f.write(f"cache = {images}")
                         f.close()
                         embed.set_footer(text="Images of your query were cached.")
-                    except Exception as e:fun.py.bak
+                    except Exception as e:
                         print(e)                        
         printimage = random.choice(images)
         if not isinstance(ctx.channel, discord.channel.DMChannel):
