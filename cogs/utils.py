@@ -18,6 +18,7 @@ import importlib
 import subprocess
 import globalconfig
 import shutil
+from datetime import datetime as dt
 from discord.ext import commands
 from shutil import copyfile
 from git import Repo
@@ -28,11 +29,13 @@ start_time = time.time()
 apikey = config.virustotal_api
 iconurl = "https://rc.reoccur.tech/assets/vt_logo.png"
 
+
 async def getdata(url):  # switch from requests module to aiohttp (see above for reason)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
-            r = await response.text()  
+            r = await response.text()
     return r
+
 
 def vt_json_parsing(detections):
     try:
@@ -47,6 +50,7 @@ def vt_json_parsing(detections):
             break
     return detections
 
+
 class Utils(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -56,21 +60,23 @@ class Utils(commands.Cog):
         '''
         Get the latency of the bot.
         '''
-        em = discord.Embed(title = "Pong! `"f"{round(self.bot.latency*1000)} ms`.", color = discord.Color.blue())
-        await ctx.reply(embed = em, mention_author=False)
-
+        em = discord.Embed(title="Pong! `"f"{round(self.bot.latency * 1000)} ms`.", color=discord.Color.blue())
+        await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
     async def avatar(self, ctx, *, user: discord.Member = None):
         """Get a link to somebody's avatar."""
         if user is None:
-            user = ctx.author # removed unnecessary else statement
+            user = ctx.author  # removed unnecessary else statement
         icon_webp = f'[GIF]({user.avatar_url})' if user.is_avatar_animated() else f'[WEBP]({user.avatar_url})'
         icon_png = user.avatar_url_as(format='png')
         icon_jpg = user.avatar_url_as(format='jpg')
-        embed = discord.Embed(title=f"{user.name}'s Avatar", description=f'[PNG]({icon_png}) | [JPG]({icon_jpg}) | {icon_webp}', color= discord.Color.blue())
+        embed = discord.Embed(title=f"{user.name}'s Avatar",
+                              description=f'[PNG]({icon_png}) | [JPG]({icon_jpg}) | {icon_webp}',
+                              color=discord.Color.blue())
         embed.set_image(url=user.avatar_url)
-        await ctx.reply(embed=embed, mention_author=False) #send it in an embed with different types of formats of the image
+        await ctx.reply(embed=embed,
+                        mention_author=False)  # send it in an embed with different types of formats of the image
 
     @commands.command()
     async def userinfo(self, ctx, user: discord.Member = None):
@@ -83,72 +89,53 @@ class Utils(commands.Cog):
             usernickname = "None"
         else:
             usernickname = user.display_name
-            
-        date_format = config.date_format
-        embed = discord.Embed(color = discord.Color.blue())
+        embed = discord.Embed(color=discord.Color.blue())
         embed.set_author(name=str(user), icon_url=user.avatar_url)
         embed.set_thumbnail(url=user.avatar_url)
         embed.add_field(name="ID", value=user.id)
-        embed.add_field(name="Nickname", value=usernickname)
-        embed.add_field(name="Joined", value=user.joined_at.strftime(date_format), inline=False)
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
-        embed.add_field(name="Registered", value=user.created_at.strftime(date_format), inline=True)
+        embed.add_field(name="Nickname", value=f"`{usernickname}`")
+        embed.add_field(name="Joined", value="<t:"+str(time.mktime(user.joined_at.timetuple())).split('.')[0]+">")
+        embed.add_field(name="Registered", value="<t:"+str(time.mktime(user.created_at.timetuple())).split('.')[0]+">")
         perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
-        embed.add_field(name="Guild permissions", value=perm_string, inline=False)
+        embed.add_field(name="Guild permissions", value=f"```\n{perm_string}\n```", inline=False)
         return await ctx.reply(embed=embed, mention_author=False)
-        
-
 
     @commands.command()
     async def joined(self, ctx, member: discord.Member = None):
         """Says when a member joined."""
         if not member:
             member = ctx.author
-        em = discord.Embed(title = '{0.name} joined in {0.joined_at}'.format(member), color = discord.Color.blue())
-        await ctx.reply(embed = em, mention_author=False)
-
-
+        em = discord.Embed(title='{0.name} joined in {0.joined_at}'.format(member), color=discord.Color.blue())
+        await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
     async def serverinfo(self, ctx):
         """Gives some information about the server."""
-        role_count = len(ctx.guild.roles)
-        name = str(ctx.guild.name)
-        description = "Description: " + str(ctx.guild.description)
-        owner = str(ctx.guild.owner)
-        guildid = str(ctx.guild.id)
-        region = str(ctx.guild.region)
-        memberCount = str(ctx.guild.member_count)
-        icon = str(ctx.guild.icon_url)
-        embed = discord.Embed(
-            description=description,
-            color=discord.Color.blue()
-            )
-        embed.set_thumbnail(url=icon)
-        embed.set_author(name=name, icon_url=icon)
-        embed.add_field(name="Owner", value=owner, inline=True)
-        embed.add_field(name="Server ID", value=guildid, inline=True)
-        embed.add_field(name="Server Created", value=ctx.guild.created_at.__format__(config.date_format))
-        embed.add_field(name="Region", value=region, inline=True)
-        embed.add_field(name="Number of Members", value=memberCount, inline=True)
-        embed.add_field(name="Number of Roles", value=str(role_count), inline=True)
-
+        embed = discord.Embed(description=f"```\n{ctx.guild.description}\n```", color=discord.Color.purple())
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon_url)
+        embed.add_field(name="Owner", value=ctx.guild.owner, inline=True)
+        embed.add_field(name="Server Created",
+                        value="<t:"+str(time.mktime(ctx.guild.created_at.timetuple())).split('.')[0]+">")
+        embed.add_field(name="Region", value=f"`{ctx.guild.region}`", inline=True)
+        embed.add_field(name="Number of Members", value=str(ctx.guild.member_count), inline=True)
+        embed.add_field(name="Number of Roles", value=str(len(ctx.guild.roles)), inline=True)
+        embed.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator} | Guild ID: {ctx.guild.id}",
+                         icon_url=ctx.author.avatar_url)
         await ctx.reply(embed=embed, mention_author=False)
 
-
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
-    async def poll(self, ctx, *, poll): # umm why not just use (*, poll) instead of (*poll)
+    @commands.cooldown(1, 30, commands.BucketType.user)
+    async def poll(self, ctx, *, poll):  # umm why not just use (*, poll) instead of (*poll)
         await ctx.message.delete()
         em = discord.Embed(title=f'**{poll}**', color=discord.Color.purple())
         em.set_author(name=f"{ctx.author.name}#{ctx.author.discriminator} asks:", icon_url=ctx.author.avatar_url)
-        msg = await ctx.send(embed = em)
+        msg = await ctx.send(embed=em)
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
 
-
     @commands.command(pass_context=True)
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def uptime(self, ctx):
         """Gets the uptime of the bot"""
         current_time = time.time()
@@ -161,7 +148,7 @@ class Utils(commands.Cog):
             await ctx.reply("Current uptime: " + text, mention_author=False)
 
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def botstatus(self, ctx, *args):
         """Sets the status of the bot. Owner only. Use 'botstatus' to reset"""
         args = " ".join(args[:])
@@ -169,36 +156,38 @@ class Utils(commands.Cog):
             if args == '':
                 await self.bot.change_presence(activity=discord.Game(name=''))
 
-                em = discord.Embed(title = "Bot status successfully reset!", color = discord.Color.green())
-                await ctx.reply(embed = em, mention_author=False)
+                em = discord.Embed(title="Bot status successfully reset!", color=discord.Color.green())
+                await ctx.reply(embed=em, mention_author=False)
             else:
                 await self.bot.change_presence(activity=discord.Game(name=args))
 
-                em = discord.Embed(title = "Bot status successfully changed to `" + args + "`!", color = discord.Color.green())
-                await ctx.reply(embed = em, mention_author=False)
+                em = discord.Embed(title="Bot status successfully changed to `" + args + "`!",
+                                   color=discord.Color.green())
+                await ctx.reply(embed=em, mention_author=False)
         else:
-            em = discord.Embed(title = "This command is for the bot owner only.", color = discord.Color.red())
-            await ctx.reply(embed = em, mention_author=False)
+            em = discord.Embed(title="This command is for the bot owner only.", color=discord.Color.red())
+            await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def about(self, ctx):
         '''Shows information about the bot instance'''
-        em = discord.Embed(title = "About this instance", color = discord.Color.blue())
-        em.add_field(name = "Instance name", value=f"{self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id})")
-        em.add_field(name = "Website", value = "[Reoccur Tech](https://rc.reoccur.tech)")
-        em.add_field(name = "Project URL", value = "[Github Link](https://github.com/reoccurcat/reoccurcord/)")
-        em.add_field(name = "Support server", value = "[Discord Server](https://discord.gg/BNhVjFyB3S)")
-        em.add_field(name = "Bot invite link", value = "[Invite Link](https://rc.reoccur.tech/invite)")
-        em.add_field(name = "Terms of Service", value = "[ToS](https://rc.reoccur.tech/tos)")
-        em.add_field(name = "Privacy Policy", value = "[Privacy](https://rc.reoccur.tech/privacy)")
-        serverNumber = len(self.bot.guilds) # self.bot.guilds is a list object itself
-        em.add_field(name = "Bot Server Count", value = serverNumber)
+        em = discord.Embed(title="About this instance", color=discord.Color.blue())
+        em.add_field(name="Instance name",
+                     value=f"{self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id})")
+        em.add_field(name="Website", value="[Reoccur Tech](https://rc.reoccur.tech)")
+        em.add_field(name="Project URL", value="[Github Link](https://github.com/reoccurcat/reoccurcord/)")
+        em.add_field(name="Support server", value="[Discord Server](https://discord.gg/BNhVjFyB3S)")
+        em.add_field(name="Bot invite link", value="[Invite Link](https://rc.reoccur.tech/invite)")
+        em.add_field(name="Terms of Service", value="[ToS](https://rc.reoccur.tech/tos)")
+        em.add_field(name="Privacy Policy", value="[Privacy](https://rc.reoccur.tech/privacy)")
+        serverNumber = len(self.bot.guilds)  # self.bot.guilds is a list object itself
+        em.add_field(name="Bot Server Count", value=serverNumber)
         cpuUsage = psutil.cpu_percent()
         em.add_field(name="Host CPU Usage", value=f"{cpuUsage}%")
         memUsage = psutil.virtual_memory().percent
         em.add_field(name="Host Memory Usage", value=f"{memUsage}%")
-        em.add_field(name = "Ping", value = "`"f"{round(self.bot.latency*1000)} ms`")
+        em.add_field(name="Ping", value="`"f"{round(self.bot.latency * 1000)} ms`")
         em.add_field(name="Prefix", value=f"`{config.prefix}`")
         em.add_field(name="Bot Owner", value=f"<@!{config.ownerID}>")
         current_time = time.time()
@@ -206,43 +195,43 @@ class Utils(commands.Cog):
         text = str(datetime.timedelta(seconds=difference))
         em.add_field(name="Uptime", value=text)
         em.set_thumbnail(url="https://rc.reoccur.tech/assets/icon.gif")
-        await ctx.reply(embed = em, mention_author=False)
+        await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def scanhash(self, ctx, inputhash: str):
         """Scans a hash using VirusTotal"""
         await ctx.message.delete()
         header = {'x-apikey': '{}'.format(apikey)}
         vturl = "https://www.virustotal.com/api/v3/files/{}".format(inputhash)
-        response = requests.get(vturl, headers = header).json()
+        response = requests.get(vturl, headers=header).json()
         response = str(response).split(",")
         parsed = vt_json_parsing(response)
         if parsed == -1:
-            em = discord.Embed(title = "Something went wrong, could be the hash not in the VirusTotal database.", color = discord.Color.red())
-            await ctx.reply(embed = em, mention_author=False)
+            em = discord.Embed(title="Something went wrong, could be the hash not in the VirusTotal database.",
+                               color=discord.Color.red())
+            await ctx.reply(embed=em, mention_author=False)
             return
         generated_link = "https://www.virustotal.com/gui/file/{}/detection".format(inputhash)
-        if int(parsed) == 0 :
-            em = discord.Embed(title = "Detections: {}".format(parsed), color = discord.Color.green())
-        elif int(parsed) >= 1 :
-            em = discord.Embed(title = "Detections: {}".format(parsed), color = discord.Color.red())
+        if int(parsed) == 0:
+            em = discord.Embed(title="Detections: {}".format(parsed), color=discord.Color.green())
+        elif int(parsed) >= 1:
+            em = discord.Embed(title="Detections: {}".format(parsed), color=discord.Color.red())
         em.set_author(name="VirusTotal", icon_url=iconurl)
         em.add_field(name="Link:", value=generated_link)
-        await ctx.reply(embed = em, mention_author=False)
+        await ctx.reply(embed=em, mention_author=False)
         return
 
-
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def scanurl(self, ctx, url: str):
         """Scans a URL using VirusTotal"""
-        #Need to import base64 module to work
+        # Need to import base64 module to work
         await ctx.message.delete()
         header = {'x-apikey': '{}'.format(apikey)}
         data = {'url': url}
         vturl = "https://www.virustotal.com/api/v3/urls"
-        response = requests.post(vturl, data = data, headers = header).json()
+        response = requests.post(vturl, data=data, headers=header).json()
         response = str(response).split(",")
         keyword = "'id': '"
         for i in response:
@@ -251,38 +240,43 @@ class Utils(commands.Cog):
                 try:
                     result_id = str(response[1])
                 except Exception:
-                    em = discord.Embed(title = "Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage.", color = discord.Color.red())
+                    em = discord.Embed(
+                        title="Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage.",
+                        color=discord.Color.red())
                     em.set_author(name="VirusTotal", icon_url=iconurl)
-                    await ctx.reply(embed = em, mention_author=False)
+                    await ctx.reply(embed=em, mention_author=False)
                     return
                 break
         try:
             vturl = "https://www.virustotal.com/api/v3/urls/{}".format(result_id)
         except Exception:
-            em = discord.Embed(title = "Something went wrong.", color = discord.Color.red())
+            em = discord.Embed(title="Something went wrong.", color=discord.Color.red())
             em.set_author(name="VirusTotal", icon_url=iconurl)
-            await ctx.reply(embed = em, mention_author=False)
+            await ctx.reply(embed=em, mention_author=False)
             return
-        em = discord.Embed(title = "Analyzing URL...", description = "Please wait for 15 seconds.", color = discord.Color.blue())
+        em = discord.Embed(title="Analyzing URL...", description="Please wait for 15 seconds.",
+                           color=discord.Color.blue())
         em.set_author(name="VirusTotal", icon_url=iconurl)
-        msg = await ctx.reply(embed = em, mention_author=False)
+        msg = await ctx.reply(embed=em, mention_author=False)
         await asyncio.sleep(15)
         response = requests.get(vturl, headers=header).json()
         response = str(response).split(",")
         parsed = vt_json_parsing(response)
         if parsed == -1:
-            new_embed = discord.Embed(title = "Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage.", color = discord.Color.red())
-            #await ctx.reply(embed = em)
+            new_embed = discord.Embed(
+                title="Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage.",
+                color=discord.Color.red())
+            # await ctx.reply(embed = em)
             await msg.edit(embed=new_embed)
         else:
             generated_link = "https://www.virustotal.com/gui/url/{}/detection".format(result_id)
             if int(parsed) >= 1:
-                new_embed = discord.Embed(title = "Detections: {}".format(str(parsed)), color = discord.Color.red())
+                new_embed = discord.Embed(title="Detections: {}".format(str(parsed)), color=discord.Color.red())
             else:
-                new_embed = discord.Embed(title = "Detections: {}".format(str(parsed)), color = discord.Color.green())
+                new_embed = discord.Embed(title="Detections: {}".format(str(parsed)), color=discord.Color.green())
             new_embed.set_author(name="VirusTotal", icon_url=iconurl)
             new_embed.add_field(name="Link:", value=generated_link)
-            #await ctx.reply(embed = em)
+            # await ctx.reply(embed = em)
             await msg.edit(embed=new_embed)
 
     @commands.command()
@@ -295,7 +289,8 @@ class Utils(commands.Cog):
             jsondata = json.loads(jsondata)
             for item in jsondata:
                 jsondata2 = item
-            em = discord.Embed(title="Email Creator", description=f"Your generated temporary email is `{jsondata2}`.", color=discord.Color.blue())
+            em = discord.Embed(title="Email Creator", description=f"Your generated temporary email is `{jsondata2}`.",
+                               color=discord.Color.blue())
             em.set_footer(text=f"Try running '{config.prefix}onesecmail check (email)' to view your inbox!")
             em.set_author(name="Temp Mail Manager", icon_url=mailicon)
             await ctx.send(embed=em)
@@ -306,19 +301,23 @@ class Utils(commands.Cog):
             jsondata = await getdata(url)
             jsondata = json.loads(jsondata)
             if str(jsondata) == "[]":
-                em = discord.Embed(title="Email Manager", description="You have no emails yet.", color=discord.Color.blue())
+                em = discord.Embed(title="Email Manager", description="You have no emails yet.",
+                                   color=discord.Color.blue())
                 em.set_author(name="Temp Mail Manager", icon_url=mailicon)
                 await ctx.send(embed=em)
             else:
-                #await ctx.send(str(jsondata))
-                #await ctx.send(type(jsondata))
+                # await ctx.send(str(jsondata))
+                # await ctx.send(type(jsondata))
                 emailnum = 1
                 em = discord.Embed(title="Email Manager", color=discord.Color.blue())
                 em.set_author(name="Temp Mail Manager", icon_url=mailicon)
                 em.set_footer(text=f"Try running '{config.prefix}onesecmail read (email) (ID)' to read a message!")
                 for email in list(jsondata):
-                    #await ctx.send(email)
-                    em.add_field(name=f"Email {str(emailnum)} Details", value=f"Sender: **"+email["from"]+"**\nSubject: **"+email["subject"]+"**\nDate: **"+email["date"]+"**\n ID: **"+str(email["id"])+"**")
+                    # await ctx.send(email)
+                    em.add_field(name=f"Email {str(emailnum)} Details",
+                                 value=f"Sender: **" + email["from"] + "**\nSubject: **" + email[
+                                     "subject"] + "**\nDate: **" + email["date"] + "**\n ID: **" + str(
+                                     email["id"]) + "**")
                 await ctx.send(embed=em)
         elif action == "read":
             email = arg1.split("@")[0]
@@ -334,61 +333,65 @@ class Utils(commands.Cog):
             em.add_field(name="Subject", value=data["subject"])
             em.add_field(name="Body", value=data["textBody"], inline=False)
             em.add_field(name="Date", value=data["date"])
-            em.add_field(name="ID", value=str(data["id"]))   
-            await ctx.send(embed=em)     
+            em.add_field(name="ID", value=str(data["id"]))
+            await ctx.send(embed=em)
         else:
             em = discord.Embed(title="Help", color=discord.Color.blue())
             em.set_author(name="Temp Mail Manager", icon_url=mailicon)
             em.add_field(name=f"`{config.prefix}onesecmail generate`", value="Generates a temporary email.")
             em.add_field(name=f"`{config.prefix}onesecmail check (email)`", value="Views your inbox.")
-            em.add_field(name=f"`{config.prefix}onesecmail view (email) (id)`", value="Views a message.")          
+            em.add_field(name=f"`{config.prefix}onesecmail view (email) (id)`", value="Views a message.")
             await ctx.send(embed=em)
 
     @commands.command()
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def admin(self, ctx, choice=None, arg1=None, arg2=None, *, arg3=None):
         """Bot owner only commands. Run without any arguments to see the help on it."""
         if str(ctx.message.author.id) == config.ownerID:
             if choice == "update":
                 if sys.platform == "linux" or sys.platform == "linux2":
-                        try:
-                            os.mkdir('./tmp/freeupdate')
-                        except FileNotFoundError:
-                            os.rmdir('./tmp/freeupdate')
-                            os.mkdir('./tmp/freeupdate')
-                        HTTPS_REMOTE_URL = globalconfig.github_login_url
-                        DEST_NAME = './tmp/freeupdate'
-                        cloned_repo = Repo.clone_from(HTTPS_REMOTE_URL, DEST_NAME)
-                        dir_path = os.getcwd()
-                        shutil.rmtree(dir_path + "/cogs/")
-                        path = dir_path
-                        src = './tmp/freeupdate/cogs'
-                        dest = dir_path + "/cogs"
-                        destination = shutil.copytree(src, dest)
-                        copyfile('./tmp/freeupdate/bot.py', dir_path + '/bot.py')
-                        copyfile('./tmp/freeupdate/setup.py', dir_path + '/setup.py')
-                        copyfile('./tmp/freeupdate/README.md', dir_path + '/README.md')
-                        copyfile('./tmp/freeupdate/globalconfig.py', dir_path + '/globalconfig.py')
-                        copyfile('./tmp/freeupdate/start.py', dir_path + '/start.py')
-                        shutil.rmtree('./tmp/freeupdate')
-                        print("Done! Restart the bot to apply the changes!")
-                        em = discord.Embed(title = "Updated!", description = f"{self.bot.user.name} updated! No error reported. Check your console to confirm this.", color = discord.Color.green())
-                        em.add_field(name = "Note", value = "The bot will now restart. If it doesn't, start it up manually. If it won't start, open an issue in reoccurcord's GitHub repository.")
-                        await ctx.reply(embed=em, mention_author=False)
-                        dir_path = os.getcwd()
-                        subprocess.Popen(['python3', f'{dir_path}/bot.py'])
-                        await ctx.bot.close()
+                    try:
+                        os.mkdir('./tmp/freeupdate')
+                    except FileNotFoundError:
+                        os.rmdir('./tmp/freeupdate')
+                        os.mkdir('./tmp/freeupdate')
+                    HTTPS_REMOTE_URL = globalconfig.github_login_url
+                    DEST_NAME = './tmp/freeupdate'
+                    cloned_repo = Repo.clone_from(HTTPS_REMOTE_URL, DEST_NAME)
+                    dir_path = os.getcwd()
+                    shutil.rmtree(dir_path + "/cogs/")
+                    path = dir_path
+                    src = './tmp/freeupdate/cogs'
+                    dest = dir_path + "/cogs"
+                    destination = shutil.copytree(src, dest)
+                    copyfile('./tmp/freeupdate/bot.py', dir_path + '/bot.py')
+                    copyfile('./tmp/freeupdate/setup.py', dir_path + '/setup.py')
+                    copyfile('./tmp/freeupdate/README.md', dir_path + '/README.md')
+                    copyfile('./tmp/freeupdate/globalconfig.py', dir_path + '/globalconfig.py')
+                    copyfile('./tmp/freeupdate/start.py', dir_path + '/start.py')
+                    shutil.rmtree('./tmp/freeupdate')
+                    print("Done! Restart the bot to apply the changes!")
+                    em = discord.Embed(title="Updated!",
+                                       description=f"{self.bot.user.name} updated! No error reported. Check your console to confirm this.",
+                                       color=discord.Color.green())
+                    em.add_field(name="Note",
+                                 value="The bot will now restart. If it doesn't, start it up manually. If it won't start, open an issue in reoccurcord's GitHub repository.")
+                    await ctx.reply(embed=em, mention_author=False)
+                    dir_path = os.getcwd()
+                    subprocess.Popen(['python3', f'{dir_path}/bot.py'])
+                    await ctx.bot.close()
                 elif sys.platform == "win32":
-                        em = discord.Embed(title = "`updatebot` is not yet available for Windows.", color = discord.Color.red())
-                        await ctx.reply(embed=em, mention_author=False)
+                    em = discord.Embed(title="`updatebot` is not yet available for Windows.", color=discord.Color.red())
+                    await ctx.reply(embed=em, mention_author=False)
                 elif sys.platform == "darwin":
-                        em = discord.Embed(title = "`updatebot` is not yet available for macOS.", color = discord.Color.red())
-                        await ctx.reply(embed=em, mention_author=False)
+                    em = discord.Embed(title="`updatebot` is not yet available for macOS.", color=discord.Color.red())
+                    await ctx.reply(embed=em, mention_author=False)
             elif choice == "reload":
                 args = f"cogs.{arg1}"
                 self.bot.unload_extension(args)
                 self.bot.load_extension(args)
-                em = discord.Embed(title = "Cog Reloaded", description = "`" + args + "` has been reloaded.", color = discord.Color.green())
+                em = discord.Embed(title="Cog Reloaded", description="`" + args + "` has been reloaded.",
+                                   color=discord.Color.green())
                 await ctx.reply(embed=em, mention_author=False)
             elif choice == "updatecheck":
                 if sys.platform == "linux" or sys.platform == "linux2" or sys.platform == "darwin":
@@ -397,7 +400,7 @@ class Utils(commands.Cog):
                     tmpdir = "./Temp"
                 with open('config.py') as f:
                     if not 'latest_version' in f.read():
-                        with open('config.py', 'a') as writeFile :
+                        with open('config.py', 'a') as writeFile:
                             writeFile.write("latest_version = 'unknown'")
                             writeFile.close()
                             importlib.reload(config)
@@ -409,9 +412,11 @@ class Utils(commands.Cog):
                         os.rename(tmpdir + '/updatecheck/.git/objects/pack', new_name)
                         shutil.rmtree('unlock')
                     shutil.rmtree(tmpdir + '/updatecheck')
-                #os.mkdir('/tmp/freeupdate')
+                # os.mkdir('/tmp/freeupdate')
                 HTTPS_REMOTE_URL = globalconfig.github_login_url
-                first_embed = discord.Embed(title = "Checking for updates...", description = f"{self.bot.user.name} is now checking for updates. Please be patient.", color = discord.Color.blue())
+                first_embed = discord.Embed(title="Checking for updates...",
+                                            description=f"{self.bot.user.name} is now checking for updates. Please be patient.",
+                                            color=discord.Color.blue())
                 # send a first message with an embed
                 msg = await ctx.reply(embed=first_embed, mention_author=False)
                 DEST_NAME = tmpdir + '/updatecheck'
@@ -421,25 +426,39 @@ class Utils(commands.Cog):
                 try:
                     shutil.rmtree(tmpdir + '/updatecheck')
                 except os.error:
-                    embed = discord.Embed(title = "Error in removing `" + tmpdir + "/updatecheck` folder", description = 'The `' + tmpdir + '/updatecheck` folder was not able to be removed, probably due to a permissions issue.', color = discord.Color.red())
-                    await ctx.reply(embed=embed, mention_author=False) 
+                    embed = discord.Embed(title="Error in removing `" + tmpdir + "/updatecheck` folder",
+                                          description='The `' + tmpdir + '/updatecheck` folder was not able to be removed, probably due to a permissions issue.',
+                                          color=discord.Color.red())
+                    await ctx.reply(embed=embed, mention_author=False)
                 updateconfig = importlib.import_module("updateconfig")
                 if updateconfig.version > globalconfig.version:
-                    new_embed = discord.Embed(title = "Checking for updates...", description = "Checking for updates succeeded!", color = discord.Color.green())
-                    new_embed.add_field(name = "Upgrade found!", value = "It is recommended to update to version " + updateconfig.version + " from version " + globalconfig.version + " for the latest bug fixes and feature improvements.")
-                    new_embed.add_field(name = "How do I upgrade?", value = "Use `" + config.prefix + "help updatebot` for more details.")
+                    new_embed = discord.Embed(title="Checking for updates...",
+                                              description="Checking for updates succeeded!",
+                                              color=discord.Color.green())
+                    new_embed.add_field(name="Upgrade found!",
+                                        value="It is recommended to update to version " + updateconfig.version + " from version " + globalconfig.version + " for the latest bug fixes and feature improvements.")
+                    new_embed.add_field(name="How do I upgrade?",
+                                        value="Use `" + config.prefix + "help updatebot` for more details.")
                     await msg.edit(embed=new_embed)
                 if updateconfig.version < globalconfig.version:
-                    new_embed = discord.Embed(title = "Checking for updates...", description = "Checking for updates succeeded!", color = discord.Color.green())
-                    new_embed.add_field(name = "Downgrade found!", value = "It is recommended to downgrade to version " + updateconfig.version + " from version " + globalconfig.version + " because something most likely broke in the latest release.")
-                    new_embed.add_field(name = "How do I downgrade?", value = "Use `" + config.prefix + "help updatebot` for more details. (The update command also downgrades the bot.)")
+                    new_embed = discord.Embed(title="Checking for updates...",
+                                              description="Checking for updates succeeded!",
+                                              color=discord.Color.green())
+                    new_embed.add_field(name="Downgrade found!",
+                                        value="It is recommended to downgrade to version " + updateconfig.version + " from version " + globalconfig.version + " because something most likely broke in the latest release.")
+                    new_embed.add_field(name="How do I downgrade?",
+                                        value="Use `" + config.prefix + "help updatebot` for more details. (The update command also downgrades the bot.)")
                     await msg.edit(embed=new_embed)
                 if updateconfig.version == globalconfig.version:
-                    new_embed = discord.Embed(title = "Checking for updates...", description = "Checking for updates succeeded!", color = discord.Color.green())
-                    new_embed.add_field(name = "No updates found!", value = "You are up to date! This bot is at version `" + globalconfig.version + "` and the latest bot files available are at version `" + updateconfig.version + "`.")
-                    new_embed.add_field(name = "How do I upgrade?", value = "You don't need to take any action, as you are up to date already. However, you can use `" + config.prefix + "help updatebot` for more details about the upgrade/downgrade process.")
+                    new_embed = discord.Embed(title="Checking for updates...",
+                                              description="Checking for updates succeeded!",
+                                              color=discord.Color.green())
+                    new_embed.add_field(name="No updates found!",
+                                        value="You are up to date! This bot is at version `" + globalconfig.version + "` and the latest bot files available are at version `" + updateconfig.version + "`.")
+                    new_embed.add_field(name="How do I upgrade?",
+                                        value="You don't need to take any action, as you are up to date already. However, you can use `" + config.prefix + "help updatebot` for more details about the upgrade/downgrade process.")
                     await msg.edit(embed=new_embed)
-                with open('config.py', 'r') as file :
+                with open('config.py', 'r') as file:
                     filedata = file.read()
                 newdata = filedata.replace(config.latest_version, updateconfig.version)
                 with open('config.py', 'w') as file:
@@ -455,8 +474,9 @@ class Utils(commands.Cog):
                         oldlist = config.blacklist
                         oldlist.remove(str(arg2))
                         importlib.reload(config)
-                        em = discord.Embed(title = "Success", description = f"Successfully removed <@!{str(arg2)}> from the blacklist.")
-                        await ctx.reply(embed = em, mention_author=False, delete_after=5.0)
+                        em = discord.Embed(title="Success",
+                                           description=f"Successfully removed <@!{str(arg2)}> from the blacklist.")
+                        await ctx.reply(embed=em, mention_author=False, delete_after=5.0)
                     elif str(arg1) == "add":
                         importlib.reload(config)
                         with open('config.py', 'r') as file1:
@@ -474,29 +494,31 @@ class Utils(commands.Cog):
                         with open('tempconfig2.py', 'w') as file3:
                             file3.write(filedata2)
                     elif str(arg1) == "list":
-                        em = discord.Embed(title = "Blacklisted Users")
-                        em.add_field(name = "User IDs", value = '\n'.join(list(config.blacklist)))
-                        #em.add_field(name = "User Mentions", value = "<@!" + *config.blacklist, sep = "\n") + ">")
-                        await ctx.reply(embed = em, mention_author=False, delete_after=10.0)
+                        em = discord.Embed(title="Blacklisted Users")
+                        em.add_field(name="User IDs", value='\n'.join(list(config.blacklist)))
+                        # em.add_field(name = "User Mentions", value = "<@!" + *config.blacklist, sep = "\n") + ">")
+                        await ctx.reply(embed=em, mention_author=False, delete_after=10.0)
                     else:
-                        em = discord.Embed(title = "Error", description = f"`{str(arg1)}` doesn't seem to be a valid option. The valid options are `add` and `remove`.")
-                        await ctx.reply(embed = em, mention_author=False, delete_after=5.0)
+                        em = discord.Embed(title="Error",
+                                           description=f"`{str(arg1)}` doesn't seem to be a valid option. The valid options are `add` and `remove`.")
+                        await ctx.reply(embed=em, mention_author=False, delete_after=5.0)
                 else:
-                    em = discord.Embed(title = "Error", description = f"`{str(arg2)}` doesn't look like a User ID.")
-                    await ctx.reply(embed = em, mention_author=False, delete_after=5.0)
+                    em = discord.Embed(title="Error", description=f"`{str(arg2)}` doesn't look like a User ID.")
+                    await ctx.reply(embed=em, mention_author=False, delete_after=5.0)
             elif choice == "leaveserver":
                 if arg1 is None:
                     server = self.bot.get_guild(int(ctx.guild.id))
                 else:
                     server = self.bot.get_guild(int(arg1))
                 await server.leave()
-                embed = discord.Embed(title = f"Left the server '{server.name}'.", color = discord.Color.green())
+                embed = discord.Embed(title=f"Left the server '{server.name}'.", color=discord.Color.green())
                 await ctx.reply(embed=embed, mention_author=False)
             elif choice == "getchannels":
                 server = self.bot.get_guild(int(arg1))
-                embed = discord.Embed(title = f"List of channels for the server '{server.name}'", color = discord.Color.blue())
+                embed = discord.Embed(title=f"List of channels for the server '{server.name}'",
+                                      color=discord.Color.blue())
                 for channel in server.channels:
-                    embed.add_field(name = channel.name, value = channel.type)
+                    embed.add_field(name=channel.name, value=channel.type)
                 await ctx.reply(embed=embed, mention_author=False)
             elif choice == "getinvite":
                 if arg2 is not None:
@@ -504,7 +526,7 @@ class Utils(commands.Cog):
                 elif arg2 is None:
                     channelQuery = "general"
                 server = self.bot.get_guild(int(arg1))
-                embed = discord.Embed(title = f"Generated invite for '{server.name}'", color = discord.Color.blue())
+                embed = discord.Embed(title=f"Generated invite for '{server.name}'", color=discord.Color.blue())
                 for channel in server.channels:
                     if channel.name.__contains__(channelQuery):
                         searchchannel = channel
@@ -528,13 +550,18 @@ class Utils(commands.Cog):
                             inviter = i.inviter
                             channelname = i.channel.name
                             channelid = i.channel.id
-                            embed.set_footer(text="There were no invites for the channel you specified.\nThe bot used the first invite available.")
+                            embed.set_footer(
+                                text="There were no invites for the channel you specified.\nThe bot used the first invite available.")
                             break
                 except Exception:
-                    em = discord.Embed(title="Warning", description="I don't seem to have permission to check invites.\nWould you like me to create a 1-time-use invite?", color=discord.Color.red())
+                    em = discord.Embed(title="Warning",
+                                       description="I don't seem to have permission to check invites.\nWould you like me to create a 1-time-use invite?",
+                                       color=discord.Color.red())
                     emojilist = ["❌", "✅"]
+
                     def check(reaction, user):
                         return user == ctx.author and str(reaction.emoji) in emojilist
+
                     msg = await ctx.send(embed=em)
                     for emoji in emojilist:
                         await msg.add_reaction(f"{emoji}")
@@ -545,11 +572,13 @@ class Utils(commands.Cog):
                             await msg.delete()
                             for channel in server.channels:
                                 if channel.name.__contains__(channelQuery):
-                                    invite = await channel.create_invite(max_age=600, max_uses=1, reason="Bot owner generated, this invite will expire after 10 minutes and has 1 use.")
+                                    invite = await channel.create_invite(max_age=600, max_uses=1,
+                                                                         reason="Bot owner generated, this invite will expire after 10 minutes and has 1 use.")
                                     channelname = channel.name
                                     channelid = channel.id
                                     inviter = str(self.bot.user.name)
-                                    embed.set_footer(text="This invite was generated by the bot.\nIt has 1 use and will expire in 10 minutes.")
+                                    embed.set_footer(
+                                        text="This invite was generated by the bot.\nIt has 1 use and will expire in 10 minutes.")
                                     searchchannel = True
                                     break
                                 else:
@@ -560,49 +589,55 @@ class Utils(commands.Cog):
                                     inviter = i.inviter
                                     channelname = i.channel.name
                                     channelid = i.channel.id
-                                    embed.set_footer(text="There were no invites for the channel you specified.\nThe bot used the first invite available.")
+                                    embed.set_footer(
+                                        text="There were no invites for the channel you specified.\nThe bot used the first invite available.")
                                     break
                         elif str(reaction.emoji) == "❌":
                             await msg.delete()
                             return
                     except asyncio.TimeoutError:
                         await msg.delete()
-                        return    
-                embed.add_field(name = "Channel Name", value = str(channelname))
-                embed.add_field(name = "Channel ID", value = str(channelid))
-                embed.add_field(name = "Channel Invite", value = invite)
-                embed.add_field(name = "Inviter", value = str(inviter))
+                        return
+                embed.add_field(name="Channel Name", value=str(channelname))
+                embed.add_field(name="Channel ID", value=str(channelid))
+                embed.add_field(name="Channel Invite", value=invite)
+                embed.add_field(name="Inviter", value=str(inviter))
                 await ctx.reply(embed=embed, mention_author=False)
             elif choice == "servers":
                 servers = list(self.bot.guilds)
-                embed = discord.Embed(title = f"Connected on {str(len(servers))} servers:", color = discord.Color.blue())
-                embed.add_field(name = "Servers", value = '\n'.join(guild.name for guild in self.bot.guilds))
-                embed.add_field(name = "Server IDs", value = '\n'.join(str(guild.id) for guild in self.bot.guilds))
-                embed.add_field(name = "Member Count", value = '\n'.join(str(guild.member_count) for guild in self.bot.guilds))
+                embed = discord.Embed(title=f"Connected on {str(len(servers))} servers:", color=discord.Color.blue())
+                embed.add_field(name="Servers", value='\n'.join(guild.name for guild in self.bot.guilds))
+                embed.add_field(name="Server IDs", value='\n'.join(str(guild.id) for guild in self.bot.guilds))
+                embed.add_field(name="Member Count",
+                                value='\n'.join(str(guild.member_count) for guild in self.bot.guilds))
                 await ctx.reply(embed=embed, mention_author=False)
             elif choice == "shutdown":
-                first_embed = discord.Embed(title = "Shutting down bot...", color = discord.Color.blue())
+                first_embed = discord.Embed(title="Shutting down bot...", color=discord.Color.blue())
                 msg = await ctx.reply(embed=first_embed, mention_author=False)
-                new_embed = discord.Embed(title = "Shut down bot!", description = "Check your console, as it may still be running a subprocess. If it is, press `ctrl + c` on your keyboard to end the process.", color = discord.Color.green())
+                new_embed = discord.Embed(title="Shut down bot!",
+                                          description="Check your console, as it may still be running a subprocess. If it is, press `ctrl + c` on your keyboard to end the process.",
+                                          color=discord.Color.green())
                 await msg.edit(embed=new_embed)
                 await ctx.bot.close()
             elif choice == "restart":
-                first_embed = discord.Embed(title = "Restarting bot...", color = discord.Color.blue())
+                first_embed = discord.Embed(title="Restarting bot...", color=discord.Color.blue())
                 msg = await ctx.reply(embed=first_embed, mention_author=False)
                 dir_path = os.getcwd()
                 subprocess.Popen(['python3', f'{dir_path}/bot.py'])
-                new_embed = discord.Embed(title = "Restarted bot!", color = discord.Color.green())
+                new_embed = discord.Embed(title="Restarted bot!", color=discord.Color.green())
                 await msg.edit(embed=new_embed)
                 await ctx.bot.close()
             elif choice == "load":
                 args = f"cogs.{arg1}"
                 self.bot.load_extension(args)
-                em = discord.Embed(title = "Cog Loaded", description = "`" + args + "` has been loaded.", color = discord.Color.green())
+                em = discord.Embed(title="Cog Loaded", description="`" + args + "` has been loaded.",
+                                   color=discord.Color.green())
                 await ctx.reply(embed=em, mention_author=False)
             elif choice == "unload":
                 args = f"cogs.{arg1}"
                 self.bot.unload_extension(args)
-                em = discord.Embed(title = "Cog Unloaded", description = "`" + args + "` has been unloaded.", color = discord.Color.green())
+                em = discord.Embed(title="Cog Unloaded", description="`" + args + "` has been unloaded.",
+                                   color=discord.Color.green())
                 await ctx.reply(embed=em, mention_author=False)
             elif choice == "stats":
                 em = discord.Embed(title="Stats")
@@ -614,8 +649,10 @@ class Utils(commands.Cog):
                     newlist = self.bot.commandsran
                     test = []
                     dictionary = {}
+
                     def sortfunc(e):
                         return e['amount']
+
                     for item in newlist:
                         dictionary = {}
                         counted = newlist.count(item)
@@ -624,15 +661,16 @@ class Utils(commands.Cog):
                         if dictionary not in test:
                             test.append(dictionary)
                         del dictionary
-                    test.sort(key=sortfunc, reverse=True) 
-                    #print(test)
+                    test.sort(key=sortfunc, reverse=True)
+                    # print(test)
                     number = 0
                     commanduses = []
                     for item in test:
                         if number != 4:
                             try:
-                                commanduses.append("**Name:** `"+str(item["command"])+"`; **Amount**: `"+str(item["amount"])+"`")
-                                number = number+1
+                                commanduses.append("**Name:** `" + str(item["command"]) + "`; **Amount**: `" + str(
+                                    item["amount"]) + "`")
+                                number = number + 1
                             except Exception:
                                 break
                     if commanduses != []:
@@ -648,30 +686,33 @@ class Utils(commands.Cog):
                     for x in range(4):
                         try:
                             dictionary = list1[x]
-                            errorlist.append("**-** `"+str(dictionary["command"])+"` at `"+str(dictionary["time"])+"`:\n```fix\n"+str(dictionary["error"])+"\n```")
+                            errorlist.append("**-** `" + str(dictionary["command"]) + "` at `" + str(
+                                dictionary["time"]) + "`:\n```fix\n" + str(dictionary["error"]) + "\n```")
                         except Exception:
                             break
                     if dictionary != {}:
                         em.add_field(name="Recent Errors", value="\n".join(errorlist), inline=False)
                     else:
-                        em.add_field(name="Recent Errors", value="There have not been any errors since the bot started.")
+                        em.add_field(name="Recent Errors",
+                                     value="There have not been any errors since the bot started.")
                 except Exception:
-                    em.add_field(name="Recent Errors", value="There have not been any errors since the bot started.", inline=False)
+                    em.add_field(name="Recent Errors", value="There have not been any errors since the bot started.",
+                                 inline=False)
                 await ctx.send(embed=em)
             elif choice == "dmfeed":
                 dictionary = {}
                 validpolls = ["userfeature", "ownerfeature"]
                 validsettings = ["start", "stop"]
                 if not os.path.exists("./data/feedback/"):
-                    os.mkdir("./data/feedback/")  
+                    os.mkdir("./data/feedback/")
                 if arg1 == "set":
                     if arg2 in validpolls and arg3 in validsettings:
                         dictionary["name"] = str(arg2)
-                        dictionary["status"] = str(arg3) 
+                        dictionary["status"] = str(arg3)
                         if not os.path.exists(f"./data/feedback/{arg2}"):
                             os.mkdir(f"./data/feedback/{arg2}")
                         with open(f"./data/feedback/{arg2}/status.json", "w") as f:
-                            json.dump(dictionary, f)                       
+                            json.dump(dictionary, f)
                 elif arg1 == "trigger":
                     if arg2 in validpolls:
                         try:
@@ -691,7 +732,8 @@ class Utils(commands.Cog):
                                     if value == "optedin":
                                         user = self.bot.get_user(int(key))
                                         em = discord.Embed(title="DM Feedback", color=discord.Color.purple())
-                                        em.set_footer(text="Feedback: '[prefix]dmfeed feedback userfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout userfeature'")
+                                        em.set_footer(
+                                            text="Feedback: '[prefix]dmfeed feedback userfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout userfeature'")
                                         em.add_field(name="Feedback Question", value=f"> {arg3}")
                                         await user.send(embed=em)
                             elif status["name"] == "ownerfeature":
@@ -706,44 +748,51 @@ class Utils(commands.Cog):
                                             usersadded.append(guild.owner.id)
                                             user = self.bot.get_user(int(guild.owner.id))
                                             em = discord.Embed(title="DM Feedback", color=discord.Color.purple())
-                                            em.set_footer(text="Feedback: '[prefix]dmfeed feedback ownerfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout ownerfeature'")
+                                            em.set_footer(
+                                                text="Feedback: '[prefix]dmfeed feedback ownerfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout ownerfeature'")
                                             em.add_field(name="Feedback Question", value=f"> {arg3}")
                                             await user.send(embed=em)
                                         except:
                                             usersadded.append(guild.owner.id)
                                             user = self.bot.get_user(int(guild.owner.id))
                                             em = discord.Embed(title="DM Feedback", color=discord.Color.purple())
-                                            em.set_footer(text="Feedback: '[prefix]dmfeed feedback ownerfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout ownerfeature'")
+                                            em.set_footer(
+                                                text="Feedback: '[prefix]dmfeed feedback ownerfeature (feedback)'\nOpt-out: '[prefix]dmfeed optout ownerfeature'")
                                             em.add_field(name="Feedback Question", value=f"> {arg3}")
                                             await user.send(embed=em)
                 else:
                     em = discord.Embed(title="Admin DM Feedback Dashboard", color=discord.Color.purple())
-                    em.add_field(name="`[prefix]admin set` (type) (status)", value="Starts or stops the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**. Valid types for `(status)` are **start** and **stop**.")
-                    em.add_field(name="`[prefix]admin trigger` (type)", value="Triggers the DM feedback type you provide. You must set it to **start** for this to work. Valid inputs for `(type)` are **userfeature** and **ownerfeature**.")
+                    em.add_field(name="`[prefix]admin set` (type) (status)",
+                                 value="Starts or stops the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**. Valid types for `(status)` are **start** and **stop**.")
+                    em.add_field(name="`[prefix]admin trigger` (type)",
+                                 value="Triggers the DM feedback type you provide. You must set it to **start** for this to work. Valid inputs for `(type)` are **userfeature** and **ownerfeature**.")
                     await ctx.send(embed=em)
             else:
                 em = discord.Embed(title="Help", color=discord.Color.blue())
                 em.set_author(name="Admin (Bot Owner Only) Commands")
                 em.add_field(name=f"`{config.prefix}admin servers`", value="Shows the servers the bot is in")
-                em.add_field(name=f"`{config.prefix}admin getinvite (serverid) [channelname]`", value="Generates an invite for a server the bot is in")
-                em.add_field(name=f"`{config.prefix}admin getchannels (serverid)`", value="Gets a list of channels in a server")
+                em.add_field(name=f"`{config.prefix}admin getinvite (serverid) [channelname]`",
+                             value="Generates an invite for a server the bot is in")
+                em.add_field(name=f"`{config.prefix}admin getchannels (serverid)`",
+                             value="Gets a list of channels in a server")
                 em.add_field(name=f"`{config.prefix}admin reload (cog)`", value="Reloads a cog")
-                em.add_field(name=f"`{config.prefix}admin unload (cog)`", value="Unloads a cog")  
+                em.add_field(name=f"`{config.prefix}admin unload (cog)`", value="Unloads a cog")
                 em.add_field(name=f"`{config.prefix}admin load (cog)`", value="Loads a cog")
-                em.add_field(name=f"`{config.prefix}admin blacklist (add, remove, list) (userid)`", value="Manages the bot blacklist")
+                em.add_field(name=f"`{config.prefix}admin blacklist (add, remove, list) (userid)`",
+                             value="Manages the bot blacklist")
                 em.add_field(name=f"`{config.prefix}admin update`", value="Updates the bot (Linux only)")
-                em.add_field(name=f"`{config.prefix}admin updatecheck`", value="Checks for updates to the bot") 
-                em.add_field(name=f"`{config.prefix}admin shutdown`", value="Shuts down the bot")  
-                em.add_field(name=f"`{config.prefix}admin restart`", value="Restarts the bot")    
+                em.add_field(name=f"`{config.prefix}admin updatecheck`", value="Checks for updates to the bot")
+                em.add_field(name=f"`{config.prefix}admin shutdown`", value="Shuts down the bot")
+                em.add_field(name=f"`{config.prefix}admin restart`", value="Restarts the bot")
                 em.add_field(name=f"`{config.prefix}admin stats`", value="Shows bot stats")
                 em.add_field(name=f"`{config.prefix}admin dmfeed`", value="Manages DM feedback")
                 await ctx.send(embed=em)
         else:
-            em = discord.Embed(title = "This command is for the bot owner only.", color = discord.Color.red())
+            em = discord.Embed(title="This command is for the bot owner only.", color=discord.Color.red())
             await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def dmfeed(self, ctx, opttype=None, choice=None, *, feedback=None):
         if opttype == "optout":
             if choice == "ownerfeature":
@@ -841,7 +890,8 @@ class Utils(commands.Cog):
                     else:
                         optedin = False
                 if optedin is False:
-                    await ctx.send("You cannot provide feedback for this right now, as you are not opted in.\nTo learn how to opt in, use the `dmpoll` command.")
+                    await ctx.send(
+                        "You cannot provide feedback for this right now, as you are not opted in.\nTo learn how to opt in, use the `dmpoll` command.")
                     return
             elif choice == "ownerfeature":
                 for guild in self.bot.guilds:
@@ -851,13 +901,15 @@ class Utils(commands.Cog):
                     else:
                         owner = False
                     if owner is False:
-                        await ctx.send("You cannot provide feedback for this right now, as you are not an owner of a server this bot is in.")
-                        return 
+                        await ctx.send(
+                            "You cannot provide feedback for this right now, as you are not an owner of a server this bot is in.")
+                        return
                 with open(f"./data/feedback/ownerfeature/users.json", "r") as f:
                     users = json.load(f)
                 for key, value in users.items():
                     if key == str(ctx.author.id) and value == "optedout":
-                        await ctx.send("You cannot provide feedback for this right now, as you are not opted in.\nTo learn how to opt in, use the `dmfeed` command.")
+                        await ctx.send(
+                            "You cannot provide feedback for this right now, as you are not opted in.\nTo learn how to opt in, use the `dmfeed` command.")
                         return
             em = discord.Embed(title="DM Feedback Recieved", color=discord.Color.purple())
             em.add_field(name="Feature", value=f"`{choice}`")
@@ -868,14 +920,16 @@ class Utils(commands.Cog):
             await ctx.send("Feedback sent!")
         else:
             em = discord.Embed(title="DM Feedback Dashboard", color=discord.Color.purple())
-            em.add_field(name="`[prefix]dmfeed optin` (type)", value="Opts into the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.")
-            em.add_field(name="`[prefix]dmfeed optout` (type)", value="Opts out of the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.")
-            em.add_field(name="`[prefix]dmfeed feedback` (type) (feedback)", value="Sends feedback for the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.\nReplace `(feedback)` with your feedback.")
+            em.add_field(name="`[prefix]dmfeed optin` (type)",
+                         value="Opts into the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.")
+            em.add_field(name="`[prefix]dmfeed optout` (type)",
+                         value="Opts out of the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.")
+            em.add_field(name="`[prefix]dmfeed feedback` (type) (feedback)",
+                         value="Sends feedback for the DM feature feedback type you provide.\nValid inputs for `(type)` are **userfeature** and **ownerfeature**.\nReplace `(feedback)` with your feedback.")
             await ctx.send(embed=em)
 
-
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def feedback(self, ctx, anonymous, *, feedback=None):
         if anonymous == "anonymous":
             submitter = "Requested Anonymous"
@@ -885,7 +939,8 @@ class Utils(commands.Cog):
         elif anonymous != "anonymous" and not bool(feedback):
             submitter = f"{ctx.author.name}#{ctx.author.discriminator} (<@!{ctx.author.id}>)"
             feedback = anonymous
-        em = discord.Embed(title="Feedback Sent!", description="Your feedback was sent to the bot owner.", color=discord.Color.green())
+        em = discord.Embed(title="Feedback Sent!", description="Your feedback was sent to the bot owner.",
+                           color=discord.Color.green())
         await ctx.send(embed=em)
         em = discord.Embed(title="Feedback Recieved", color=discord.Color.blue())
         em.add_field(name="Submitter", value=str(submitter))
@@ -895,7 +950,7 @@ class Utils(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    @commands.cooldown(1,10,commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def config(self, ctx, arg1=None, arg2=None, arg3=None):
         validsettings = ["detectghostpings", "prefix"]
         settingtype = ["bool", "string"]
@@ -914,7 +969,7 @@ class Utils(commands.Cog):
                 guildconfig = json.load(f)
             for item, itemvalue in guildconfig.items():
                 settingslist.append(f"{item}: {itemvalue}")
-            em.add_field(name="Current Settings", value='```py\n'+'\n'.join(settingslist)+"\n```")
+            em.add_field(name="Current Settings", value='```py\n' + '\n'.join(settingslist) + "\n```")
             await ctx.send(embed=em)
         elif arg1 == "set":
             for item in validsettings:
@@ -942,9 +997,10 @@ class Utils(commands.Cog):
                 await ctx.send("That is not a valid setting.")
 
     @commands.command()
-    @commands.cooldown(1,30,commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def invite(self, ctx):
-        em = discord.Embed(title="Invite me to your server:", description="https://rc.reoccur.tech/invite", color=discord.Color.purple())
+        em = discord.Embed(title="Invite me to your server:", description="https://rc.reoccur.tech/invite",
+                           color=discord.Color.purple())
         await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
@@ -962,6 +1018,7 @@ class Utils(commands.Cog):
                     f.write(data)
                 await ctx.send(f"`{attachment.filename}` written.")
             await ctx.send("Success.")
+
 
 def setup(bot):
     bot.add_cog(Utils(bot))
