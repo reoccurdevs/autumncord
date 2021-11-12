@@ -22,7 +22,7 @@ If you find an issue, or have a feature suggestion, please let us know by openin
 4. Run `python setup.py` for a configuration creator. If you fail to do this, the bot will not run.
 5. Before starting, make sure the Server Members Intent is enabled in your bot settings in the Discord Developer Portal.
 6. To make sure the `mute` and `unmute` commands work, please make a role called `muted` in your server. The bot will not (yet) do this for you. After you create the role, make sure to create overrides for the channels you don't want a muted user speaking in.
-7. Run the main bot file: `python start.py` (or see the commands with `python3 start.py --help`).
+7. Run the main bot file: `python start.py` (or see the commands with `python start.py --help`).
 
 ### Features
 
@@ -38,6 +38,6 @@ There are many features of the bot. These features include:
 - Lots more commands, and more commands being added regularly!
 
 Like earlier said, if you have any feature requests or issues with the bot, open an issue [here](https://github.com/reoccurdevs/reoccurcord/issues)!
-Enjoy the bot! We hope you have as much fun with it as we had programming it! :)
+Enjoy the bot! We hope you have as much fun with it as I have programming it! :)
 
 Made with PyCord.
