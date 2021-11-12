@@ -1,7 +1,7 @@
 [![Issues](https://img.shields.io/github/issues/reoccurdevs/reoccurcord.svg?colorB=5e03fc)](https://github.com/reoccurdevs/reoccurcord/issues)
 [![Site Status](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=purple&up_message=online&url=https%3A%2F%2Fautumncord.xyz)](https://autumncord.xyz)
 [![Stars](https://img.shields.io/github/stars/reoccurdevs/reoccurcord?style=social)](https://github.com/reoccurdevs/reoccurcord/stargazers)
-[![Discord](https://img.shields.io/discord/867833814415179796)](https://discord.gg/xev3FrVJZG)
+[![Discord](https://canary.discord.com/api/guilds/892934149881610240/widget.png?style=shield)](https://discord.gg/hkUa3gpj8T)
 [![License](https://img.shields.io/github/license/reoccurdevs/reoccurcord)](https://github.com/reoccurdevs/reoccurcord/blob/main/LICENSE)
 [![Commits](https://img.shields.io/github/commit-activity/m/reoccurdevs/reoccurcord)](https://github.com/reoccurdevs/reoccurcord/commits/main)
 ![Maintained](https://img.shields.io/maintenance/yes/2021)
