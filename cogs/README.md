@@ -1,1 +1,1 @@
-This is where reoccurcord's command groups (cogs) are. All of the commands are in these files, and they are sorted by category.
+This is where AutumnCord's command groups (cogs) are. All of the commands are in these files, and they are sorted by category.
