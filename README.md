@@ -9,7 +9,7 @@
 # AutumnCord 
 
 ## Welcome to the official GitHub page of the AutumnCord bot!
-reoccurcord is a Discord bot made formerly by the reoccurdevs team but taken over by the last dev that worked on it that you can edit and self host. If you want to fork it and make a new bot, that's fine, but please give us credit. :)
+AutumnCord is a Discord bot made formerly by the reoccurdevs team but taken over by the last dev that worked on it that you can edit and self host. If you want to fork it and make a new bot, that's fine, but please give us credit. :)
 If you find an issue, or have a feature suggestion, please let us know by opening an issue [here](https://github.com/reoccurdevs/autumncord/issues).
 
 ## Documentation
