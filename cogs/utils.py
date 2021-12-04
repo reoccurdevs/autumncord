@@ -1022,10 +1022,14 @@ class Utils(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 4, commands.BucketType.user)
     async def bumpreminder(self, ctx, choice=None, arg1=None, arg2=None):
-        if ctx.author is not ctx.guild.owner:
-            raise PermissionError
-            return
-        await ctx.send("test")
+        if choice is None:
+            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off", color=discord.Color.blue())
+            await ctx.send(embed=e)
+        elif choice == "on":
+            if ctx.author is not ctx.guild.owner:
+                e = discord.Embed(title="Error", description="You cannot use this command if you are not the server owner.", color=discord.Color.red())
+                await ctx.send(embed=e)
+                return
 
 def setup(bot):
     bot.add_cog(Utils(bot))
