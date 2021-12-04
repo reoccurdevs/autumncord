@@ -1021,7 +1021,7 @@ class Utils(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 4, commands.BucketType.user)
-    async def bumpreminder(self, ctx, choice=None, arg1=None, arg2=None):
+    async def bumpreminder(self, ctx, choice=None):
         if choice is None:
             e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off", color=discord.Color.blue())
             await ctx.send(embed=e)
@@ -1031,7 +1031,7 @@ class Utils(commands.Cog):
                 await ctx.send(embed=e)
                 return
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
-                guildconfig = json.loads(file)
+                guildconfig = json.load(file)
             guildconfig["bumpreminder"] = True
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
                 json.dump(guildconfig, file)
