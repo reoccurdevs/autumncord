@@ -371,6 +371,7 @@ async def on_message(msg):
             bot.commandsran.append(newcontent)
             notacommand = False
             break
+    print(notacommand)
     try:
         if notacommand is True and msg.author.id != bot.user.id and bool(msg.mentions) is True and guildconfig[
         "detectghostpings"] == "True":
@@ -388,7 +389,7 @@ async def on_message(msg):
                 await msg.channel.send(embed=em)
             except asyncio.TimeoutError:
                 pass
-        if notacommand is True and msg.author != bot.user and str(guildconfig["bumpreminder"]) == "True":
+        if notacommand is True and msg.author != bot.user and guildconfig["bumpreminder"] == "True":
             await asyncio.sleep(0.5)
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
@@ -398,7 +399,6 @@ async def on_message(msg):
                     await msg.channel.send("Bump succeeded!")
                 else:
                     await msg.channel.send("There was an error bumping.")
-                continue
         else:
             await bot.process_commands(msg)
     except:
