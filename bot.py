@@ -388,7 +388,7 @@ async def on_message(msg):
                 await msg.channel.send(embed=em)
             except asyncio.TimeoutError:
                 pass
-        if notacommand is True and msg.author != bot.user and guildconfig["bumpreminder"] == "True":
+        if notacommand is True and msg.author != bot.user and str(guildconfig["bumpreminder"]) == "True":
             await asyncio.sleep(0.5)
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
