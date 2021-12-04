@@ -1019,6 +1019,13 @@ class Utils(commands.Cog):
                 await ctx.send(f"`{attachment.filename}` written.")
             await ctx.send("Success.")
 
+    @commands.command()
+    @commands.cooldown(1, 4, commands.BucketType.user)
+    async def bumpreminder(self, ctx, choice=None, arg1=None, arg2=None):
+        if ctx.author is not ctx.guild.owner:
+            raise PermissionError
+            return
+        await ctx.send("test")
 
 def setup(bot):
     bot.add_cog(Utils(bot))
