@@ -371,35 +371,45 @@ async def on_message(msg):
             bot.commandsran.append(newcontent)
             notacommand = False
             break
-    if notacommand is True and msg.author.id != bot.user.id and bool(msg.mentions) is True and guildconfig[
-      "detectghostpings"] == "True":
-        def check(m):
-            return m.author == msg.author
+    try:
+        if notacommand is True and msg.author.id != bot.user.id and bool(msg.mentions) is True and guildconfig[
+        "detectghostpings"] == "True":
+            def check(m):
+                return m.author == msg.author
 
-        try:
-            await bot.wait_for("message_delete", timeout=random.randint(5, 15), check=check)
-            em = discord.Embed(title="Ghost Ping Detected!", color=discord.Color.red(), timestamp=datetime.utcnow())
-            em.add_field(name="Message", value=msg.content, inline=False)
-            em.add_field(name="Sender",
-                         value=f"`{str(msg.author.name)}#{str(msg.author.discriminator)}`\n(<@!{msg.author.id}>)",
-                         inline=False)
-            em.set_footer(text="👻")
-            await msg.channel.send(embed=em)
-        except asyncio.TimeoutError:
-            pass
-    if notacommand is True and msg.author != bot.user and guildconfig["bumpreminder"] == "True":
-        await asyncio.sleep(0.5)
-        messages = await msg.channel.history(limit=2).flatten()
-        embeds = messages[1].embeds
-        for embed in embeds:
-            e = embed.to_dict()
-            if "DISBOARD" in e["description"]:
-                await msg.channel.send("Bump succeeded!")
-            else:
-                await msg.channel.send("There was an error bumping.")
-            continue
-    else:
+            try:
+                await bot.wait_for("message_delete", timeout=random.randint(5, 15), check=check)
+                em = discord.Embed(title="Ghost Ping Detected!", color=discord.Color.red(), timestamp=datetime.utcnow())
+                em.add_field(name="Message", value=msg.content, inline=False)
+                em.add_field(name="Sender",
+                            value=f"`{str(msg.author.name)}#{str(msg.author.discriminator)}`\n(<@!{msg.author.id}>)",
+                            inline=False)
+                em.set_footer(text="👻")
+                await msg.channel.send(embed=em)
+            except asyncio.TimeoutError:
+                pass
+        if notacommand is True and msg.author != bot.user and guildconfig["bumpreminder"] == "True":
+            await asyncio.sleep(0.5)
+            messages = await msg.channel.history(limit=2).flatten()
+            embeds = messages[1].embeds
+            for embed in embeds:
+                e = embed.to_dict()
+                if "DISBOARD" in e["description"]:
+                    await msg.channel.send("Bump succeeded!")
+                else:
+                    await msg.channel.send("There was an error bumping.")
+                continue
+        else:
+            await bot.process_commands(msg)
+    except:
+        await msg.channel.send("Your settings are corrupt, so they have been reset.")
+        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False}
+            json.dump(dictionary, file)
+        if notacommand is True:
+            return
         await bot.process_commands(msg)
+        
 
 
 @bot.event
