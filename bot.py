@@ -50,6 +50,10 @@ description = ""
 def prefix(bot, msg):
     if isinstance(msg.channel, discord.channel.DMChannel):
         return config.prefix
+    if not os.path.exists("./data/"):
+        os.mkdir("./data/")
+    if not os.path.exists("./data/guild/"):
+        os.mkdir("./data/guild/")
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default"}
@@ -351,7 +355,7 @@ async def on_message(msg):
         return
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default"}
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False}
             json.dump(dictionary, file)
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file2:
         guildconfig = json.load(file2)
@@ -383,6 +387,17 @@ async def on_message(msg):
             await msg.channel.send(embed=em)
         except asyncio.TimeoutError:
             pass
+    if notacommand is True and msg.author != bot.user and guildconfig["bumpreminder"] == "True":
+        await asyncio.sleep(0.5)
+        messages = await msg.channel.history(limit=2).flatten()
+        embeds = messages[1].embeds
+        for embed in embeds:
+            e = embed.to_dict()
+            if "DISBOARD" in e["description"]:
+                await msg.channel.send("Bump succeeded!")
+            else:
+                await msg.channel.send("There was an error bumping.")
+            continue
     else:
         await bot.process_commands(msg)
 

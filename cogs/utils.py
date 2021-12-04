@@ -1030,6 +1030,12 @@ class Utils(commands.Cog):
                 e = discord.Embed(title="Error", description="You cannot use this command if you are not the server owner.", color=discord.Color.red())
                 await ctx.send(embed=e)
                 return
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
+                guildconfig = json.loads(file)
+            guildconfig["bumpreminder"] = True
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
+                json.dump(guildconfig, file)
+            await ctx.send("Done!")
 
 def setup(bot):
     bot.add_cog(Utils(bot))
