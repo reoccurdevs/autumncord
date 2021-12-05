@@ -408,7 +408,7 @@ async def on_message(msg):
                 print("started count")
                 await asyncio.sleep(60)
                 print("ended count")
-                await msg.channel.send("test")
+                await msg.channel.send(f"<@&{guildconfig['bumprole']} bump the server!!")
             else:
                 await msg.channel.send("There was an error bumping.")
             return
