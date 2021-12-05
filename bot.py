@@ -373,10 +373,6 @@ async def on_message(msg):
                 break
     except IndexError:
         pass
-    if msg.content == "testbumptrigger":
-        testbumptrigger = True
-        e = {description: "DISBOARD"}
-        msg.author.id = 302050872383242240
     try:
         if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
         "detectghostpings"] == "True":
@@ -394,7 +390,12 @@ async def on_message(msg):
                 return
             except asyncio.TimeoutError:
                 return
-        if notacommand is True and msg.author.id == 302050872383242240 and guildconfig["bumpreminder"] == "True":
+        author = msg.author.id
+        if msg.content == "testbumptrigger":
+            testbumptrigger = True
+            e = {description: "DISBOARD"}
+            author = 302050872383242240
+        if notacommand is True and author == 302050872383242240 and guildconfig["bumpreminder"] == "True":
             print("detected")
             if testbumptrigger is False:
                 for embed in msg.embeds:
