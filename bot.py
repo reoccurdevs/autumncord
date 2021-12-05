@@ -405,6 +405,8 @@ async def on_message(msg):
                     break
             if "DISBOARD" in e["description"]:
                 await msg.channel.send("Bump succeeded!")
+                await asyncio.sleep(60)
+                await msg.channel.send("test")
             else:
                 await msg.channel.send("There was an error bumping.")
             return
