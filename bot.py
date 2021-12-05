@@ -394,7 +394,7 @@ async def on_message(msg):
             msg2 = msg
             await asyncio.sleep(0.5)
             print("detected")
-            if not msg.content.startswith("!d bump"):
+            if not msg2.content.startswith("!d bump"):
                 print("returned")
                 return
             messages = await msg2.channel.history(limit=2).flatten()
