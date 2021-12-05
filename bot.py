@@ -390,7 +390,7 @@ async def on_message(msg):
                 return
             except asyncio.TimeoutError:
                 return
-        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True" and str(msg.content).startswith("!d bump") and msg.content.split("bump"[1]).startswith(" "):
+        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True" and str(msg.content).startswith("!d bump"):
             await asyncio.sleep(0.5)
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
@@ -401,7 +401,6 @@ async def on_message(msg):
                 else:
                     await msg.channel.send("There was an error bumping.")
             return
-        await bot.process_commands(msg)
     except:
         await msg.channel.send("Your settings are corrupt, so they have been reset.")
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
