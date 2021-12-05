@@ -390,7 +390,11 @@ async def on_message(msg):
                 return
             except asyncio.TimeoutError:
                 return
-        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True" and str(msg.content).startswith("!d bump"):
+        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True":
+            print("detected")
+            if not msg.content.startswith("!d bump"):
+                print("returned")
+                return
             await asyncio.sleep(0.5)
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
