@@ -401,6 +401,7 @@ async def on_message(msg):
                 else:
                     await msg.channel.send("There was an error bumping.")
             return
+        await bot.process_commands(msg)
     except:
         await msg.channel.send("Your settings are corrupt, so they have been reset.")
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
