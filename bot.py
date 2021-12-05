@@ -395,7 +395,6 @@ async def on_message(msg):
             if not msg.content.startswith("!d bump"):
                 print("returned")
                 return
-            await asyncio.sleep(0.5)
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
             for embed in embeds:
