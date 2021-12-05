@@ -393,7 +393,7 @@ async def on_message(msg):
         author = msg.author.id
         if msg.content == "testbumptrigger":
             testbumptrigger = True
-            e = {description: "DISBOARD"}
+            e = {"description": "DISBOARD"}
             author = 302050872383242240
         if notacommand is True and author == 302050872383242240 and guildconfig["bumpreminder"] == "True":
             print("detected")
