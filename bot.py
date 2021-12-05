@@ -341,15 +341,6 @@ for filename in os.listdir('./cogs'):
 
 @bot.event
 async def on_message(msg):
-    if msg.author.bot:
-        return
-    try:
-        newcontent = msg.content.split()[0].split(config.prefix)[1]
-    except IndexError:
-        try:
-            newcontent = msg.content.split(config.prefix)[1]
-        except IndexError:
-            newcontent = msg.content
     if isinstance(msg.channel, discord.channel.DMChannel):
         await bot.process_commands(msg)
         return
@@ -361,23 +352,23 @@ async def on_message(msg):
         guildconfig = json.load(file2)
     notacommand = True
     for command in bot.commands:
-        if newcontent == command.name:
+        if msg.author.bot:
+            break
+        if command.name in msg:
             if str(msg.author.id) in config.blacklist:
                 em = discord.Embed(title="User Blacklisted",
                                    description=f"You are blacklisted from using the bot. Please contact "
                                                f"<@!{config.ownerID}> for more information.")
                 await msg.channel.send(embed=em, delete_after=5.0)
                 return
-            bot.commandsran.append(newcontent)
+            bot.commandsran.append(msg.split(prefix)[1])
             notacommand = False
             break
-    print(notacommand)
     try:
-        if notacommand is True and msg.author.id != bot.user.id and bool(msg.mentions) is True and guildconfig[
+        if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
         "detectghostpings"] == "True":
             def check(m):
                 return m.author == msg.author
-
             try:
                 await bot.wait_for("message_delete", timeout=random.randint(5, 15), check=check)
                 em = discord.Embed(title="Ghost Ping Detected!", color=discord.Color.red(), timestamp=datetime.utcnow())
@@ -390,21 +381,17 @@ async def on_message(msg):
                 return
             except asyncio.TimeoutError:
                 return
-        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True":
-            msg2 = msg
-            await asyncio.sleep(0.5)
+        if notacommand is True and msg.author.id == 302050872383242240 and guildconfig["bumpreminder"] == "True":
             print("detected")
-            if not msg2.content.startswith("!d bump"):
+            if not msg.content.startswith("!d bump"):
                 print("returned")
                 return
-            messages = await msg2.channel.history(limit=2).flatten()
-            embeds = messages[1].embeds
-            for embed in embeds:
+            for embed in msg.embeds:
                 e = embed.to_dict()
                 if "DISBOARD" in e["description"]:
-                    await msg2.channel.send("Bump succeeded!")
+                    await msg.channel.send("Bump succeeded!")
                 else:
-                    await msg2.channel.send("There was an error bumping.")
+                    await msg.channel.send("There was an error bumping.")
             return
         await bot.process_commands(msg)
     except:
@@ -415,6 +402,7 @@ async def on_message(msg):
         if notacommand is True:
             return
         await bot.process_commands(msg)
+
         
 
 
