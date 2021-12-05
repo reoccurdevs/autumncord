@@ -344,6 +344,11 @@ async def on_message(msg):
     if isinstance(msg.channel, discord.channel.DMChannel):
         await bot.process_commands(msg)
         return
+    if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
+        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=5)
+        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
+            json.dump(dictionary, file)
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file:
         guildconfig = json.load(file)
     if guildconfig["prefix"] == "default":
@@ -418,7 +423,7 @@ async def on_message(msg):
             return
         await bot.process_commands(msg)
     except:
-        await msg.channel.send("Your settings are corrupt, so they have been reset.", delete_after=5)
+        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=5)
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
             json.dump(dictionary, file)
@@ -431,7 +436,7 @@ async def on_message(msg):
         guildconfig["prefix"]
         guildconfig["detectghostpings"]
     except:
-        await msg.channel.send("Your settings are corrupt, so they have been reset.", delete_after=5)
+        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=5)
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
             json.dump(dictionary, file)
