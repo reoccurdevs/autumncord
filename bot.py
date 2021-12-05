@@ -417,9 +417,9 @@ async def on_message(msg):
                 e.set_author(name="Disboard Bump Reminder")
                 await msg.channel.send(f"<@&{guildconfig['bumprole']}>", embed=e)
             else:
-                await bot.add_reaction(msg, "x")
+                await msg.add_reaction(msg, "❌")
                 await asyncio.sleep(5)
-                await msg.remove_reaction("x", bot.user)
+                await msg.remove_reaction("❌", bot.user)
             return
         await bot.process_commands(msg)
     except:
