@@ -392,9 +392,6 @@ async def on_message(msg):
                 return
         if notacommand is True and msg.author.id == 302050872383242240 and guildconfig["bumpreminder"] == "True":
             print("detected")
-            if not msg.content.startswith("!d bump"):
-                print("returned")
-                return
             for embed in msg.embeds:
                 e = embed.to_dict()
                 if "DISBOARD" in e["description"]:
