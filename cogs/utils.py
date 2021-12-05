@@ -1025,7 +1025,11 @@ class Utils(commands.Cog):
         if choice is None:
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
                 guildconfig = json.load(file)
-            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder <role id or ping>` - Sets the role to ping with the reminder (currently <@&{guildconfig['bumprole']}>)", color=discord.Color.blue())
+            if guildconfig["bumprole"] == "None":
+                bumprole = "not set"
+            else:
+                bumprole = f"<@&{guildconfig['bumprole']}>"
+            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder <role id or ping>` - Sets the role to ping with the reminder (currently {bumprole})", color=discord.Color.blue())
             await ctx.send(embed=e)
         elif choice == "on":
             if ctx.author is not ctx.guild.owner:
