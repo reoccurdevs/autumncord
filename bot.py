@@ -387,9 +387,10 @@ async def on_message(msg):
                             inline=False)
                 em.set_footer(text="👻")
                 await msg.channel.send(embed=em)
+                return
             except asyncio.TimeoutError:
-                pass
-        if notacommand is True and str(msg.author.id) == "302050872383242240" and guildconfig["bumpreminder"] is True:
+                return
+        if str(msg.author.id) == "302050872383242240" and guildconfig["bumpreminder"] == "True":
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
             for embed in embeds:
@@ -398,8 +399,8 @@ async def on_message(msg):
                     await msg.channel.send("Bump succeeded!")
                 else:
                     await msg.channel.send("There was an error bumping.")
-        else:
-            await bot.process_commands(msg)
+            return
+        await bot.process_commands(msg)
     except:
         await msg.channel.send("Your settings are corrupt, so they have been reset.")
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
