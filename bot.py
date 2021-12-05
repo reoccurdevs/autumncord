@@ -406,9 +406,12 @@ async def on_message(msg):
             if "DISBOARD" in e["description"]:
                 await msg.channel.send("Bump succeeded!")
                 print("started count")
-                await asyncio.sleep(60)
+                #await asyncio.sleep(7200)
+                await asyncio.sleep(30)
                 print("ended count")
-                await msg.channel.send(f"<@&{guildconfig['bumprole']}> bump the server!!")
+                e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!")
+                e.set_author(name="Disboard Bump Reminder")
+                await msg.channel.send(f"<@&{guildconfig['bumprole']}>")
             else:
                 await msg.channel.send("There was an error bumping.")
             return
