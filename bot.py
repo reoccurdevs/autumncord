@@ -357,19 +357,22 @@ async def on_message(msg):
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file2:
         guildconfig = json.load(file2)
     notacommand = True
-    for command in bot.commands:
-        if msg.author.bot:
-            break
-        if str(msg.content.split(prefix)[1]).startswith(command.name):
-            if str(msg.author.id) in config.blacklist:
-                em = discord.Embed(title="User Blacklisted",
-                                   description=f"You are blacklisted from using the bot. Please contact "
-                                               f"<@!{config.ownerID}> for more information.")
-                await msg.channel.send(embed=em, delete_after=5.0)
-                return
-            bot.commandsran.append(msg.content.split(prefix)[1])
-            notacommand = False
-            break
+    try:
+        for command in bot.commands:
+            if msg.author.bot:
+                break
+            if str(msg.content.split(prefix)[1]).startswith(command.name):
+                if str(msg.author.id) in config.blacklist:
+                    em = discord.Embed(title="User Blacklisted",
+                                    description=f"You are blacklisted from using the bot. Please contact "
+                                                f"<@!{config.ownerID}> for more information.")
+                    await msg.channel.send(embed=em, delete_after=5.0)
+                    return
+                bot.commandsran.append(msg.content.split(prefix)[1])
+                notacommand = False
+                break
+    except IndexError:
+        pass
     try:
         if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
         "detectghostpings"] == "True":
