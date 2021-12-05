@@ -344,6 +344,12 @@ async def on_message(msg):
     if isinstance(msg.channel, discord.channel.DMChannel):
         await bot.process_commands(msg)
         return
+    with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file:
+        guildconfig = json.load(file)
+    if guildconfig["prefix"] == "default":
+        prefix = config.prefix
+    else:
+        prefix = guildconfig["prefix"]
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False}
