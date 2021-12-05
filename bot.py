@@ -373,6 +373,10 @@ async def on_message(msg):
                 break
     except IndexError:
         pass
+    if msg.content == "testbumptrigger":
+        testbumptrigger = True
+        e = {description: "DISBOARD"}
+        msg.author.id = 302050872383242240
     try:
         if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
         "detectghostpings"] == "True":
@@ -392,12 +396,14 @@ async def on_message(msg):
                 return
         if notacommand is True and msg.author.id == 302050872383242240 and guildconfig["bumpreminder"] == "True":
             print("detected")
-            for embed in msg.embeds:
-                e = embed.to_dict()
-                if "DISBOARD" in e["description"]:
-                    await msg.channel.send("Bump succeeded!")
-                else:
-                    await msg.channel.send("There was an error bumping.")
+            if testbumptrigger is False:
+                for embed in msg.embeds:
+                    e = embed.to_dict()
+                    break
+            if "DISBOARD" in e["description"]:
+                await msg.channel.send("Bump succeeded!")
+            else:
+                await msg.channel.send("There was an error bumping.")
             return
         await bot.process_commands(msg)
     except:
