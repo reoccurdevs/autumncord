@@ -56,7 +56,7 @@ def prefix(bot, msg):
         os.mkdir("./data/guild/")
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default"}
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
             json.dump(dictionary, file)
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file:
         guildconfig = json.load(file)
@@ -352,7 +352,7 @@ async def on_message(msg):
         prefix = guildconfig["prefix"]
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False}
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False, "bumprole": None}
             json.dump(dictionary, file)
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file2:
         guildconfig = json.load(file2)
@@ -404,27 +404,40 @@ async def on_message(msg):
                     e = embed.to_dict()
                     break
             if "DISBOARD" in e["description"]:
-                await msg.channel.send("Bump succeeded!")
-                print("started count")
-                #await asyncio.sleep(7200)
-                await asyncio.sleep(30)
-                print("ended count")
-                e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!")
+                await msg.channel.send("Bump succeeded! I'll ping the bump role when it's time to bump again!", delete_after=5)
+                #print("started count")
+                await asyncio.sleep(7200)
+                #print("ended count")
+                e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!", color=discord.Color.purple())
                 e.set_author(name="Disboard Bump Reminder")
                 await msg.channel.send(f"<@&{guildconfig['bumprole']}>", embed=e)
             else:
-                await msg.channel.send("There was an error bumping.")
+                await bot.add_reaction(msg, "x")
+                await asyncio.sleep(5)
+                await msg.remove_reaction("x", bot.user)
             return
         await bot.process_commands(msg)
     except:
-        await msg.channel.send("Your settings are corrupt, so they have been reset.")
+        await msg.channel.send("Your settings are corrupt, so they have been reset.", delete_after=5)
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False}
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
             json.dump(dictionary, file)
         if notacommand is True:
             return
         await bot.process_commands(msg)
-
+    try:
+        guildconfig["bumpreminder"]
+        guildconfig["bumprole"]
+        guildconfig["prefix"]
+        guildconfig["detectghostpings"]
+    except:
+        await msg.channel.send("Your settings are corrupt, so they have been reset.", delete_after=5)
+        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
+            json.dump(dictionary, file)
+        if notacommand is True:
+            return
+        await bot.process_commands(msg)
         
 
 

@@ -1023,7 +1023,9 @@ class Utils(commands.Cog):
     @commands.cooldown(1, 4, commands.BucketType.user)
     async def bumpreminder(self, ctx, choice=None, role:discord.Role=None):
         if choice is None:
-            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off", color=discord.Color.blue())
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
+                guildconfig = json.load(file)
+            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder <role id or ping>` - Sets the role to ping with the reminder (currently <@&{guildconfig['bumprole']}>)", color=discord.Color.blue())
             await ctx.send(embed=e)
         elif choice == "on":
             if ctx.author is not ctx.guild.owner:
@@ -1032,6 +1034,8 @@ class Utils(commands.Cog):
                 return
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
                 guildconfig = json.load(file)
+            if guildconfig["bumprole"] == "None":
+                await ctx.send("Setup a bump role first! Run `bumpconfig` again for more information.")
             guildconfig["bumpreminder"] = "True"
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
                 json.dump(guildconfig, file)
@@ -1054,10 +1058,10 @@ class Utils(commands.Cog):
                 return
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
                 guildconfig = json.load(file)
-            print(role.id)
             guildconfig["bumprole"] = str(role.id)
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
                 json.dump(guildconfig, file)
             await ctx.send("Done!")
+
 def setup(bot):
     bot.add_cog(Utils(bot))
