@@ -391,6 +391,7 @@ async def on_message(msg):
             except asyncio.TimeoutError:
                 return
         if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True":
+            await asyncio.sleep(0.5)
             print("detected")
             if not msg.content.startswith("!d bump"):
                 print("returned")
