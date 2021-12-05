@@ -411,7 +411,7 @@ async def on_message(msg):
                 print("ended count")
                 e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!")
                 e.set_author(name="Disboard Bump Reminder")
-                await msg.channel.send(f"<@&{guildconfig['bumprole']}>")
+                await msg.channel.send(f"<@&{guildconfig['bumprole']}>", embed=e)
             else:
                 await msg.channel.send("There was an error bumping.")
             return
