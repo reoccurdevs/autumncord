@@ -1032,7 +1032,7 @@ class Utils(commands.Cog):
                 return
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
                 guildconfig = json.load(file)
-            guildconfig["bumpreminder"] = True
+            guildconfig["bumpreminder"] = "True"
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
                 json.dump(guildconfig, file)
             await ctx.send("Done!")
