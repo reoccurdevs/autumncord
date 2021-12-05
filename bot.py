@@ -391,6 +391,8 @@ async def on_message(msg):
             except asyncio.TimeoutError:
                 return
         author = msg.author.id
+        # Debugging variable
+        testbumptrigger = False
         if msg.content == "testbumptrigger":
             testbumptrigger = True
             e = {"description": "DISBOARD"}
