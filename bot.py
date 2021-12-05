@@ -360,7 +360,7 @@ async def on_message(msg):
     for command in bot.commands:
         if msg.author.bot:
             break
-        if str(msg.content).startswith(msg.content.split(prefix)[1]+command):
+        if str(msg.content.split(prefix)[1]).startswith(command.name):
             if str(msg.author.id) in config.blacklist:
                 em = discord.Embed(title="User Blacklisted",
                                    description=f"You are blacklisted from using the bot. Please contact "
