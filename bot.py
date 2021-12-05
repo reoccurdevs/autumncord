@@ -354,14 +354,14 @@ async def on_message(msg):
     for command in bot.commands:
         if msg.author.bot:
             break
-        if str(msg.content).startswith(msg.split(prefix)[1]+command):
+        if str(msg.content).startswith(msg.content.split(prefix)[1]+command):
             if str(msg.author.id) in config.blacklist:
                 em = discord.Embed(title="User Blacklisted",
                                    description=f"You are blacklisted from using the bot. Please contact "
                                                f"<@!{config.ownerID}> for more information.")
                 await msg.channel.send(embed=em, delete_after=5.0)
                 return
-            bot.commandsran.append(msg.split(prefix)[1])
+            bot.commandsran.append(msg.content.split(prefix)[1])
             notacommand = False
             break
     try:
