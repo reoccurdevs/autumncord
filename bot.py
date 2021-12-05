@@ -391,19 +391,20 @@ async def on_message(msg):
             except asyncio.TimeoutError:
                 return
         if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True":
+            msg2 = msg
             await asyncio.sleep(0.5)
             print("detected")
             if not msg.content.startswith("!d bump"):
                 print("returned")
                 return
-            messages = await msg.channel.history(limit=2).flatten()
+            messages = await msg2.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
             for embed in embeds:
                 e = embed.to_dict()
                 if "DISBOARD" in e["description"]:
-                    await msg.channel.send("Bump succeeded!")
+                    await msg2.channel.send("Bump succeeded!")
                 else:
-                    await msg.channel.send("There was an error bumping.")
+                    await msg2.channel.send("There was an error bumping.")
             return
         await bot.process_commands(msg)
     except:
