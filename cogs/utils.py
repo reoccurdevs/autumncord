@@ -1021,7 +1021,7 @@ class Utils(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 4, commands.BucketType.user)
-    async def bumpreminder(self, ctx, choice=None):
+    async def bumpreminder(self, ctx, choice=None, role:discord.Role=None):
         if choice is None:
             e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off", color=discord.Color.blue())
             await ctx.send(embed=e)
@@ -1036,6 +1036,28 @@ class Utils(commands.Cog):
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
                 json.dump(guildconfig, file)
             await ctx.send("Done!")
-
+        elif choice == "off":
+            if ctx.author is not ctx.guild.owner:
+                e = discord.Embed(title="Error", description="You cannot use this command if you are not the server owner.", color=discord.Color.red())
+                await ctx.send(embed=e)
+                return
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
+                guildconfig = json.load(file)
+            guildconfig["bumpreminder"] = "False"
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
+                json.dump(guildconfig, file)
+            await ctx.send("Done!")
+        elif choice == "bumprole":
+            if ctx.author is not ctx.guild.owner:
+                e = discord.Embed(title="Error", description="You cannot use this command if you are not the server owner.", color=discord.Color.red())
+                await ctx.send(embed=e)
+                return
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
+                guildconfig = json.load(file)
+            print(role.id)
+            guildconfig["bumprole"] = str(role.id)
+            with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
+                json.dump(guildconfig, file)
+            await ctx.send("Done!")
 def setup(bot):
     bot.add_cog(Utils(bot))
