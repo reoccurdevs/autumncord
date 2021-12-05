@@ -1039,7 +1039,7 @@ class Utils(commands.Cog):
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as file:
                 guildconfig = json.load(file)
             if guildconfig["bumprole"] == "None":
-                await ctx.send("Setup a bump role first! Run `bumpconfig` again for more information.")
+                await ctx.send("Setup a bump role first! Run `bumpreminder` again for more information.")
                 return
             guildconfig["bumpreminder"] = "True"
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "w") as file:
