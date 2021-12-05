@@ -390,7 +390,7 @@ async def on_message(msg):
                 return
             except asyncio.TimeoutError:
                 return
-        if str(msg.author.id) == "302050872383242240" and guildconfig["bumpreminder"] == "True":
+        if notacommand is True and msg.author.id != bot.user.id and guildconfig["bumpreminder"] == "True":
             print("detected")
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
