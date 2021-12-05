@@ -391,6 +391,7 @@ async def on_message(msg):
             except asyncio.TimeoutError:
                 return
         if str(msg.author.id) == "302050872383242240" and guildconfig["bumpreminder"] == "True":
+            print("detected")
             messages = await msg.channel.history(limit=2).flatten()
             embeds = messages[1].embeds
             for embed in embeds:
