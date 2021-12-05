@@ -349,18 +349,26 @@ async def on_message(msg):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
             json.dump(dictionary, file)
-    with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file:
-        guildconfig = json.load(file)
-    if guildconfig["prefix"] == "default":
-        prefix = config.prefix
-    else:
-        prefix = guildconfig["prefix"]
     if not os.path.exists(f"./data/guild/{str(msg.guild.id)}.json"):
         with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
             dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": False, "bumprole": None}
             json.dump(dictionary, file)
     with open(f"./data/guild/{str(msg.guild.id)}.json", "r") as file2:
         guildconfig = json.load(file2)
+    try:
+        guildconfig["bumpreminder"]
+        guildconfig["bumprole"]
+        guildconfig["prefix"]
+        guildconfig["detectghostpings"]
+    except:
+        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=10)
+        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
+            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
+            json.dump(dictionary, file)
+    if guildconfig["prefix"] == "default":
+        prefix = config.prefix
+    else:
+        prefix = guildconfig["prefix"] 
     notacommand = True
     try:
         for command in bot.commands:
@@ -378,71 +386,51 @@ async def on_message(msg):
                 break
     except IndexError:
         pass
-    try:
-        if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
-        "detectghostpings"] == "True":
-            def check(m):
-                return m.author == msg.author
-            try:
-                await bot.wait_for("message_delete", timeout=random.randint(5, 15), check=check)
-                em = discord.Embed(title="Ghost Ping Detected!", color=discord.Color.red(), timestamp=datetime.utcnow())
-                em.add_field(name="Message", value=msg.content, inline=False)
-                em.add_field(name="Sender",
-                            value=f"`{str(msg.author.name)}#{str(msg.author.discriminator)}`\n(<@!{msg.author.id}>)",
-                            inline=False)
-                em.set_footer(text="👻")
-                await msg.channel.send(embed=em)
-                return
-            except asyncio.TimeoutError:
-                return
-        author = msg.author.id
-        # Debugging variable
-        testbumptrigger = False
-        if msg.content == "testbumptrigger":
-            testbumptrigger = True
-            e = {"description": "DISBOARD"}
-            author = 302050872383242240
-        if notacommand is True and author == 302050872383242240 and guildconfig["bumpreminder"] == "True":
-            print("detected")
-            if testbumptrigger is False:
-                for embed in msg.embeds:
-                    e = embed.to_dict()
-                    break
-            if "DISBOARD" in e["description"]:
-                await msg.channel.send("Bump succeeded! I'll ping the bump role when it's time to bump again!", delete_after=5)
-                #print("started count")
-                await asyncio.sleep(7200)
-                #print("ended count")
-                e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!", color=discord.Color.purple())
-                e.set_author(name="Disboard Bump Reminder")
-                await msg.channel.send(f"<@&{guildconfig['bumprole']}>", embed=e)
-            else:
-                await msg.add_reaction(msg, "❌")
-                await asyncio.sleep(5)
-                await msg.remove_reaction("❌", bot.user)
+    if notacommand is True and not msg.author.bot and bool(msg.mentions) is True and guildconfig[
+    "detectghostpings"] == "True":
+        def check(m):
+            return m.author == msg.author
+        try:
+            await bot.wait_for("message_delete", timeout=random.randint(5, 15), check=check)
+            em = discord.Embed(title="Ghost Ping Detected!", color=discord.Color.red(), timestamp=datetime.utcnow())
+            em.add_field(name="Message", value=msg.content, inline=False)
+            em.add_field(name="Sender",
+                        value=f"`{str(msg.author.name)}#{str(msg.author.discriminator)}`\n(<@!{msg.author.id}>)",
+                        inline=False)
+            em.set_footer(text="👻")
+            await msg.channel.send(embed=em)
             return
-        await bot.process_commands(msg)
-    except:
-        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=5)
-        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
-            json.dump(dictionary, file)
-        if notacommand is True:
+        except asyncio.TimeoutError:
             return
-        await bot.process_commands(msg)
-    try:
-        guildconfig["bumpreminder"]
-        guildconfig["bumprole"]
-        guildconfig["prefix"]
-        guildconfig["detectghostpings"]
-    except:
-        await msg.channel.send("Your guild config file is missing or corrupted, so it has been reset.", delete_after=5)
-        with open(f"./data/guild/{str(msg.guild.id)}.json", "w") as file:
-            dictionary = {"detectghostpings": False, "prefix": "default", "bumpreminder": "False", "bumprole": "None"}
-            json.dump(dictionary, file)
-        if notacommand is True:
-            return
-        await bot.process_commands(msg)
+    author = msg.author.id
+    # Debugging variable
+    testbumptrigger = False
+    #if msg.content == "testbumptrigger":
+    #    testbumptrigger = True
+    #    e = {"description": "DISBOARD"}
+    #    author = 302050872383242240
+    if notacommand is True and author == 302050872383242240 and guildconfig["bumpreminder"] == "True":
+        print("detected")
+        if testbumptrigger is False:
+            for embed in msg.embeds:
+                e = embed.to_dict()
+                break
+        if "DISBOARD" in e["description"]:
+            await msg.channel.send("Bump succeeded! I'll ping the bump role when it's time to bump again!", delete_after=10)
+            #print("started count")
+            await asyncio.sleep(7200)
+            #print("ended count")
+            e = discord.Embed(title="Time to bump the server!", description="The bump timer ran out! Run the command `!d bump` to bump the server!", color=discord.Color.purple())
+            e.set_author(name="Disboard Bump Reminder")
+            await msg.channel.send(f"<@&{guildconfig['bumprole']}>", embed=e)
+        else:
+            await msg.add_reaction(msg, "❌")
+            await asyncio.sleep(5)
+            await msg.remove_reaction("❌", bot.user)
+        return
+    await bot.process_commands(msg)
+
+
         
 
 
