@@ -1029,7 +1029,7 @@ class Utils(commands.Cog):
                 bumprole = "not set"
             else:
                 bumprole = f"<@&{guildconfig['bumprole']}>"
-            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder <role id or ping>` - Sets the role to ping with the reminder (currently {bumprole})", color=discord.Color.blue())
+            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder bumprole <role id or ping>` - Sets the role to ping with the reminder (currently {bumprole})", color=discord.Color.blue())
             await ctx.send(embed=e)
         elif choice == "on":
             if ctx.author is not ctx.guild.owner:
