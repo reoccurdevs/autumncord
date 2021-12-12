@@ -1006,7 +1006,7 @@ class Utils(commands.Cog):
                 await ctx.reply(embed=em, mention_author=False)
             elif arg2 == "set":
                 for item in validadminsettings:
-                    if arg2 == str(item):
+                    if arg3 == str(item):
                         validsetting = True
                         break
                     else:
