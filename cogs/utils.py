@@ -194,7 +194,7 @@ class Utils(commands.Cog):
         difference = int(round(current_time - start_time))
         text = str(datetime.timedelta(seconds=difference))
         em.add_field(name="Uptime", value=text)
-        em.set_thumbnail(url="https://autumncord.xyz/images/logo.png")
+        em.set_thumbnail(url=globalconfig.logo_url)
         await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()
@@ -953,7 +953,6 @@ class Utils(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def config(self, ctx, arg1=None, arg2=None, arg3=None):
         validsettings = ["detectghostpings", "prefix"]
-        settingtype = ["bool", "string"]
         if not os.path.exists("./data/guild/"):
             os.mkdir("./data/guild/")
         if not os.path.exists(f"./data/guild/{str(ctx.guild.id)}.json"):
@@ -962,7 +961,7 @@ class Utils(commands.Cog):
                 dictionary["detectghostpings"] = False
                 dictionary["prefix"] = "default"
                 json.dump(dictionary, f)
-        if arg1 == "list":
+        if arg1 == "list" or arg1 == None:
             settingslist = []
             em = discord.Embed(title="This Server's Config", color=discord.Color.blue())
             with open(f"./data/guild/{str(ctx.guild.id)}.json", "r") as f:
@@ -970,6 +969,7 @@ class Utils(commands.Cog):
             for item, itemvalue in guildconfig.items():
                 settingslist.append(f"{item}: {itemvalue}")
             em.add_field(name="Current Settings", value='```py\n' + '\n'.join(settingslist) + "\n```")
+            em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`detectghostpings`, `prefix`\n**In other commands:***\n`{config.prefix}bumpreminder`: `bumpreminder")
             await ctx.send(embed=em)
         elif arg1 == "set":
             for item in validsettings:
