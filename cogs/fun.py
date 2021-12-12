@@ -619,7 +619,7 @@ class Fun(commands.Cog):
             link = ctx.message.attachments[0].url
         await ctx.message.delete()
         em = discord.Embed(title="Your image is being analyzed. Please wait...", color=discord.Color.red())
-        em.set_author(icon_url="https://autumncord.xyz/images/logo.jpg", name="Image Analyzer")
+        em.set_author(icon_url="https://autumncord.xyz/images/logo.png", name="Image Analyzer")
         message1 = await ctx.send(embed=em)
         if censor is not None:
             nsfw, detection, censoredimage = await getunsafe(link, censor=True)

@@ -194,7 +194,7 @@ class Utils(commands.Cog):
         difference = int(round(current_time - start_time))
         text = str(datetime.timedelta(seconds=difference))
         em.add_field(name="Uptime", value=text)
-        em.set_thumbnail(url="https://autumncord.xyz/images/logo.jpg")
+        em.set_thumbnail(url="https://autumncord.xyz/images/logo.png")
         await ctx.reply(embed=em, mention_author=False)
 
     @commands.command()

@@ -109,7 +109,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                            description=f"This is the command list of {bot.user.name}'s commands. Click the numbers to "
                                        f"go to different pages, or click the house to come back here.\n" + '\n'.join(
                                         cognames), color=discord.Color.blue())
-        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
         msg = await channel.send(embed=em)
         oldpage = 0
         emojilist = ["🏠", "1️⃣", "2️⃣", "3️⃣", "⏹️"]
@@ -129,7 +129,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 1
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -143,7 +143,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 2
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -157,7 +157,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 3
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -171,7 +171,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 4
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -187,7 +187,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                                                    f"the numbers to go to different pages, or click the house to come "
                                                    f"back here.\n" + '\n'.join(
                                                     cognames), color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -220,7 +220,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                 em = discord.Embed(title="Error",
                                    description="Oops! You may not have permission to see this command group!",
                                    color=discord.Color.red())
-                em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                 # noinspection PyBroadException
                 try:
                     await msg.remove_reaction(reaction, user)
@@ -236,14 +236,14 @@ class MyNewHelp(commands.MinimalHelpCommand):
                                                    f"the numbers to go to different pages, or click the house to come "
                                                    f"back here.\n" + '\n'.join(
                                                     cognames), color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                     await msg.edit(embed=em)
                 else:
                     try:
                         page = oldpage
                         em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                            description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
+                        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.png")
                         await msg.edit(embed=em)
                     except Exception as e:
                         raise e
@@ -415,7 +415,7 @@ async def on_guild_join(guild):
                  value="My most popular commands are the `image`, `findanime`, and `analyzeimage` commands. Try them "
                        "out!")
     em.set_footer(text="This bot is mainly developed by reoccurcat#0001 and various contributers on GitHub.")
-    em.set_author(name=bot.user.name, icon_url="https://autumncord.xyz/images/logo.jpg")
+    em.set_author(name=bot.user.name, icon_url="https://autumncord.xyz/images/logo.png")
     for channel in guild.text_channels:
         if channel.name.__contains__("general"):
             if channel.permissions_for(guild.me).send_messages:
