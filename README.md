@@ -13,7 +13,8 @@ AutumnCord is a Discord bot made formerly by the reoccurdevs team but taken over
 If you find an issue, or have a feature suggestion, please let us know by opening an issue [here](https://github.com/reoccurdevs/autumncord/issues).
 
 ## Documentation
-
+### NOTICE
+I as a developer did not intend for this bot to be self hosted. Things may be broken or may break. Support may not be given for arbitrary issues. Proceed with risk.
 ### Starting the bot
 #### Make sure you have [Python 3](https://www.python.org/downloads/) installed and put in your path!
 ^^^ Linux users: this step shouldn't be necessary ^^^
