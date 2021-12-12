@@ -1014,7 +1014,7 @@ class Utils(commands.Cog):
                 if validsetting is True:
                     with open(f"config.py", "r") as f:
                         fr = f.read()
-                    fr = fr.replace(str(arg3), str(arg4))
+                    fr = fr.replace(str(fr.split(f"{arg3} = '")[1]).split("'")[0], str(arg4))
                     with open(f"config.py", "w") as f:
                         f.write(fr)
                     await ctx.send(f"{arg2} changed.")
