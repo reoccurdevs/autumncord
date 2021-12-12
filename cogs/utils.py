@@ -1003,6 +1003,7 @@ class Utils(commands.Cog):
                 em = discord.Embed(title="This Server's Config", color=discord.Color.blue())
                 em.add_field(name="Current Settings", value=f'```py\nownerID: {config.ownerID}\nprefix: {config.prefix}\n```')
                 em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`prefix`")
+                await ctx.reply(embed=em, mention_author=False)
             elif arg2 == "set":
                 for item in validadminsettings:
                     if arg2 == str(item):
