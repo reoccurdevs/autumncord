@@ -1,7 +1,7 @@
 [![Issues](https://img.shields.io/github/issues/reoccurdevs/autumncord.svg?colorB=5e03fc)](https://github.com/reoccurdevs/reoccurcord/issues)
 [![Site Status](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=purple&up_message=online&url=https%3A%2F%2Fautumncord.xyz)](https://autumncord.xyz)
 [![Stars](https://img.shields.io/github/stars/reoccurdevs/autumncord?style=social)](https://github.com/reoccurdevs/autumncord/stargazers)
-[![Discord](https://canary.discord.com/api/guilds/892934149881610240/widget.png?style=shield)](https://discord.gg/hkUa3gpj8T)
+[![Discord](https://canary.discord.com/api/guilds/883472120083005441/widget.png?style=shield)](https://discord.gg/yATc4DJ69R)
 [![License](https://img.shields.io/github/license/reoccurdevs/autumncord)](https://github.com/reoccurdevs/autumncord/blob/main/LICENSE)
 [![Commits](https://img.shields.io/github/commit-activity/m/reoccurdevs/autumncord)](https://github.com/reoccurdevs/autumncord/commits/main)
 ![Maintained](https://img.shields.io/maintenance/yes/2021)
@@ -15,7 +15,8 @@ If you find an issue, or have a feature suggestion, please let us know by openin
 ## Documentation
 
 ### Starting the bot
-#### Make sure you have [Python 3](https://www.python.org/downloads/) installed and put in path!
+#### Make sure you have [Python 3](https://www.python.org/downloads/) installed and put in your path!
+^^^ Linux users: this step shouldn't be necessary ^^^
 1. Clone the repository: `git clone https://github.com/reoccurdevs/autumncord.git` and go to step 2. An alternative is to download the ZIP file, unzip it, shift + right click in the `autumncord-main` folder, click on `Open Powershell window here`, and continue with step 3.
 2. `cd` to the repository folder: `cd autumncord`.
 3. Make sure all the dependencies are installed: `python -m pip install discord.py requests asyncio gitpython psutil datetime bs4 jishaku nudenet tensorflow-cpu` If there are any other errors with importing dependencies, install them as necessary.
