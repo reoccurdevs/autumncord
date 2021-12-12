@@ -19,7 +19,7 @@ if os.path.exists("config.py"):
         storetoken = input("Please enter your token: ")
         storeid = input("\nPlease enter your User ID: ")
         print()
-        write = f"token = '{storetoken}'\nownerID = '{storeid}'\nsetupneeded = True"
+        write = f"token = '{storetoken}'\nownerID = '{storeid}'\n"
         with open("config.py", "w") as f:
             f.write(write)
         import config
@@ -27,7 +27,7 @@ else:
     storetoken = input("Please enter your token: ")
     storeid = input("\nPlease enter your User ID: ")
     print()
-    write = f"bot_token = '{storetoken}'\nownerID = '{storeid}'\nsetupneeded = True"
+    write = f"bot_token = '{storetoken}'\nownerID = '{storeid}'\n"
     with open("config.py", "w") as f:
         f.write(write)
     import config
@@ -109,7 +109,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                            description=f"This is the command list of {bot.user.name}'s commands. Click the numbers to "
                                        f"go to different pages, or click the house to come back here.\n" + '\n'.join(
                                         cognames), color=discord.Color.blue())
-        em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
         msg = await channel.send(embed=em)
         oldpage = 0
         emojilist = ["🏠", "1️⃣", "2️⃣", "3️⃣", "⏹️"]
@@ -129,7 +129,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 1
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -143,7 +143,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 2
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -157,7 +157,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 3
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -171,7 +171,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                     page = 4
                     em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                        description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -187,7 +187,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                                                    f"the numbers to go to different pages, or click the house to come "
                                                    f"back here.\n" + '\n'.join(
                                                     cognames), color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     # noinspection PyBroadException
                     try:
                         await msg.remove_reaction(reaction, user)
@@ -220,7 +220,7 @@ class MyNewHelp(commands.MinimalHelpCommand):
                 em = discord.Embed(title="Error",
                                    description="Oops! You may not have permission to see this command group!",
                                    color=discord.Color.red())
-                em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                 # noinspection PyBroadException
                 try:
                     await msg.remove_reaction(reaction, user)
@@ -236,14 +236,14 @@ class MyNewHelp(commands.MinimalHelpCommand):
                                                    f"the numbers to go to different pages, or click the house to come "
                                                    f"back here.\n" + '\n'.join(
                                                     cognames), color=discord.Color.blue())
-                    em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                    em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                     await msg.edit(embed=em)
                 else:
                     try:
                         page = oldpage
                         em = discord.Embed(title=f"Command List Page {page}\n{cognames[page - 1]}",
                                            description=f"{commandlist[page - 1]}", color=discord.Color.blue())
-                        em.set_author(name=f"{bot.user.name}", icon_url="https://rc.reoccur.tech/assets/icon.gif")
+                        em.set_author(name=f"{bot.user.name}", icon_url="https://autumncord.xyz/images/logo.jpg")
                         await msg.edit(embed=em)
                     except Exception as e:
                         raise e
@@ -276,7 +276,7 @@ async def status_task():
         await asyncio.sleep(20)
         await bot.change_presence(status=discord.Status.idle,
                                   activity=discord.Activity(type=discord.ActivityType.watching,
-                                                            name=f"for {config.prefix}help | '"
+                                                            name=f"for {config.prefix}help | "
                                                                  f"v{str(globalconfig.version)}"))
         await asyncio.sleep(20)
 
@@ -293,36 +293,6 @@ async def on_ready():
     # await bot.change_presence(activity=discord.Game(name='v' + globalconfig.version + " | " + config.prefix + "help"))
     user = bot.get_user(int(config.ownerID))
     await user.send("The bot is back online.")
-    if config.setupneeded is True:
-        while True:
-            em = discord.Embed(title="Required Variables",
-                               description="Bot Prefix: `in progress`\nDate Format: `pending`",
-                               color=discord.Color.purple())
-            em.set_author(name="reoccurcord setup utility", icon_url="https://rc.reoccur.tech/assets/icon.gif")
-            em.add_field(name="Directions", value="Please send a message that contains the bot prefix.")
-            msg = await user.send(embed=em)
-
-            def check(ctx, message: discord.Message):
-                return ctx.author == message.author
-
-            userinput = await bot.wait_for('message', check=check)
-            em = discord.Embed(title="Required Variables",
-                               description="Bot Prefix: `in progress`\nDate Format: `pending`",
-                               color=discord.Color.purple())
-            em.set_author(name="reoccurcord setup utility", icon_url="https://rc.reoccur.tech/assets/icon.gif")
-            em.add_field(name="Directions", value=f"Verify this is correct:\n||`{userinput.content}`||")
-            await msg.add_reaction("❌")
-            await msg.add_reaction("✅")
-
-            def check(ctx, message: discord.Message):
-                return ctx.author == message.author
-
-            reaction, user = await bot.wait_for('message', check=check)
-            if str(reaction.emoji) == "✅":
-                await user.send("Saving for config write...")
-                # writeprefix = userinput.content
-                break
-
     if bot.statusloop is False:
         bot.loop.create_task(status_task())
     # await resetcommands()
@@ -445,7 +415,7 @@ async def on_guild_join(guild):
                  value="My most popular commands are the `image`, `findanime`, and `analyzeimage` commands. Try them "
                        "out!")
     em.set_footer(text="This bot is mainly developed by reoccurcat#0001 and various contributers on GitHub.")
-    em.set_author(name=bot.user.name, icon_url="https://rc.reoccur.tech/assets/icon.gif")
+    em.set_author(name=bot.user.name, icon_url="https://autumncord.xyz/images/logo.jpg")
     for channel in guild.text_channels:
         if channel.name.__contains__("general"):
             if channel.permissions_for(guild.me).send_messages:
