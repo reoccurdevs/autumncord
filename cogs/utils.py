@@ -969,7 +969,9 @@ class Utils(commands.Cog):
             for item, itemvalue in guildconfig.items():
                 settingslist.append(f"{item}: {itemvalue}")
             em.add_field(name="Current Settings", value='```py\n' + '\n'.join(settingslist) + "\n```")
-            em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`detectghostpings`, `prefix`\n**In other commands:**\n`{config.prefix}bumpreminder`: `bumpreminder`")
+            em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`detectghostpings`, `prefix`\n**In other commands:**\n`{config.prefix}bumpreminder`: `bumpreminder`\n")
+            if ctx.author.id == config.ownerID:
+                em.set_footer(text=f"Run '{config.prefix}config admin' for admin settings.")
             await ctx.send(embed=em)
         elif arg1 == "set":
             for item in validsettings:
