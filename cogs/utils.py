@@ -117,7 +117,6 @@ class Utils(commands.Cog):
         embed.add_field(name="Owner", value=ctx.guild.owner, inline=True)
         embed.add_field(name="Server Created",
                         value="<t:"+str(time.mktime(ctx.guild.created_at.timetuple())).split('.')[0]+">")
-        embed.add_field(name="Region", value=f"`{ctx.guild.region}`", inline=True)
         embed.add_field(name="Number of Members", value=str(ctx.guild.member_count), inline=True)
         embed.add_field(name="Number of Roles", value=str(len(ctx.guild.roles)), inline=True)
         embed.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator} | Guild ID: {ctx.guild.id}",
@@ -172,28 +171,13 @@ class Utils(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def about(self, ctx):
         '''Shows information about the bot instance'''
-        em = discord.Embed(title="About this instance", color=discord.Color.blue())
-        em.add_field(name="Instance name",
-                     value=f"{self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id})")
-        em.add_field(name="Website", value="[Reoccur Tech](https://rc.reoccur.tech)")
-        em.add_field(name="Project URL", value="[Github Link](https://github.com/reoccurcat/reoccurcord/)")
-        em.add_field(name="Support server", value="[Discord Server](https://discord.gg/BNhVjFyB3S)")
-        em.add_field(name="Bot invite link", value="[Invite Link](https://rc.reoccur.tech/invite)")
-        em.add_field(name="Terms of Service", value="[ToS](https://rc.reoccur.tech/tos)")
-        em.add_field(name="Privacy Policy", value="[Privacy](https://rc.reoccur.tech/privacy)")
-        serverNumber = len(self.bot.guilds)  # self.bot.guilds is a list object itself
-        em.add_field(name="Bot Server Count", value=serverNumber)
-        cpuUsage = psutil.cpu_percent()
-        em.add_field(name="Host CPU Usage", value=f"{cpuUsage}%")
-        memUsage = psutil.virtual_memory().percent
-        em.add_field(name="Host Memory Usage", value=f"{memUsage}%")
-        em.add_field(name="Ping", value="`"f"{round(self.bot.latency * 1000)} ms`")
-        em.add_field(name="Prefix", value=f"`{config.prefix}`")
-        em.add_field(name="Bot Owner", value=f"<@!{config.ownerID}>")
         current_time = time.time()
         difference = int(round(current_time - start_time))
         text = str(datetime.timedelta(seconds=difference))
-        em.add_field(name="Uptime", value=text)
+        em = discord.Embed(title="About this instance", description=f"ℹ️ {self.bot.user.name}#{self.bot.user.discriminator}\n🌐 [autumncord.xyz](https://autumncord.xyz)\n<:github:919756344003801158> [reoccurdevs/autumncord](https://github.com/reoccurdevs/autumncord/)\n "
+            f"<:discord:919757711716024401> [discord.gg/yATc4DJ69R](https://discord.gg/yATc4DJ69R)\n📲 [Bot invite link](https://discord.com/api/oauth2/authorize?client_id=907042163660046356&permissions=533076503671&scope=applications.commands%20bot)\n "
+            f"🔢 In {len(self.bot.guilds)} servers\n🖥️ {psutil.cpu_percent()}% CPU; {psutil.virtual_memory().percent}% RAM\n🏓 {round(self.bot.latency * 1000)} ms\n⬆️🕒 {text}\n👑 <@!{config.ownerID}>" ,color=discord.Color.blue())
+        em.set_footer(text=f"Bot User ID: {self.bot.user.id}")
         em.set_thumbnail(url=globalconfig.logo_url)
         await ctx.reply(embed=em, mention_author=False)
 
