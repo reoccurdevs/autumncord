@@ -1108,5 +1108,13 @@ class Utils(commands.Cog):
                 json.dump(guildconfig, file)
             await ctx.send("Done!")
 
+    @commands.command()
+    @commands.cooldown(1, 4, commands.BucketType.user)
+    async def say(self, ctx, *, message):
+        if str(ctx.author.id) != config.ownerID:
+            return
+        await ctx.message.delete()
+        await ctx.send(message)
+
 def setup(bot):
     bot.add_cog(Utils(bot))
