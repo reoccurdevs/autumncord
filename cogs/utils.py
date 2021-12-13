@@ -1020,6 +1020,37 @@ class Utils(commands.Cog):
                     await ctx.send(f"{arg2} changed.")
                 elif validsetting is False:
                     await ctx.send("That is not a valid setting.")
+                e = discord.Embed(title="Restart Required", description="The setting you have changed requires a restart to take effect. Would you like to restart now?")
+                msg = await ctx.send(embed=e)
+                emojilist = ["✅", "❌"]
+                for emoji in emojilist:
+                    await msg.add_reaction(f"{emoji}")
+                def check(userreaction, sentuser):
+                    return sentuser == ctx.author and str(userreaction.emoji) in emojilist
+                try:
+                    reaction, reactuser = await self.bot.wait_for("reaction_add", timeout=60, check=check)
+                    if str(reaction.emoji) == "✅":
+                        proceed = "restart"
+                    elif str(reaction.emoji) == "❌":
+                        proceed = "norestart"
+                except asyncio.TimeoutError:
+                    proceed = "norestart"
+                try:
+                    for emoji in emojilist:
+                        await msg.clear_reaction(emoji)
+                except Exception:
+                    pass
+                if proceed == "restart":
+                    e = discord.Embed(title="Restarting...", description="The setting you have changed requires a restart to take effect. **Restarting the bot now...**")
+                    msg = await msg.edit(embed=e)
+                    dir_path = os.getcwd()
+                    subprocess.Popen(['python3', f'{dir_path}/bot.py'])
+                    new_embed = discord.Embed(title="Restarted!", description="The setting you have changed requires a restart to take effect. **Restarted the bot!**", color=discord.Color.purple())
+                    await msg.edit(embed=new_embed)
+                    await ctx.bot.close()
+                elif proceed == "norestart":
+                    e = discord.Embed(title="Restart Required (Dismissed)", description="The setting you have changed requires a restart to take effect. **You chose not to restart.**", color=discord.Color.orange())
+                    await msg.edit(embed=e)
 
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
@@ -1054,7 +1085,7 @@ class Utils(commands.Cog):
                 bumprole = "not set"
             else:
                 bumprole = f"<@&{guildconfig['bumprole']}>"
-            e = discord.Embed(title="Bump Reminder", description=f"`r!bumpreminder on` - Turns the bump reminder on\n`r!bumpreminder off` - Turns the bump reminder off\n`r!bumpreminder bumprole <role id or ping>` - Sets the role to ping with the reminder (currently {bumprole})", color=discord.Color.blue())
+            e = discord.Embed(title=f"Bump Reminder", description=f"`{config.prefix}bumpreminder on` - Turns the bump reminder on\n`{config.prefix}bumpreminder off` - Turns the bump reminder off\n`{config.prefix}bumpreminder bumprole <role id or ping>` - Sets the role to ping with the reminder (currently {bumprole})", color=discord.Color.blue())
             await ctx.send(embed=e)
         elif choice == "on":
             if ctx.author is not ctx.guild.owner:
