@@ -1039,7 +1039,7 @@ class Utils(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def invite(self, ctx):
-        em = discord.Embed(title="Invite me to your server:", description="https://rc.reoccur.tech/invite",
+        em = discord.Embed(title="Invite me to your server:", description="https://discord.com/api/oauth2/authorize?client_id=907042163660046356&permissions=533076503671&scope=applications.commands%20bot",
                            color=discord.Color.purple())
         await ctx.reply(embed=em, mention_author=False)
 
