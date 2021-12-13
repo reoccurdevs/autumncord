@@ -176,7 +176,7 @@ class Utils(commands.Cog):
         text = str(datetime.timedelta(seconds=difference))
         em = discord.Embed(title="About this instance", description=f"ℹ️ {self.bot.user.name}#{self.bot.user.discriminator}\n🌐 [autumncord.xyz](https://autumncord.xyz)\n<:github:919756344003801158> [reoccurdevs/autumncord](https://github.com/reoccurdevs/autumncord/)\n "
             f"<:discord:919757711716024401> [discord.gg/yATc4DJ69R](https://discord.gg/yATc4DJ69R)\n📲 [Bot invite link](https://discord.com/api/oauth2/authorize?client_id=907042163660046356&permissions=533076503671&scope=applications.commands%20bot)\n "
-            f"🔢 In {len(self.bot.guilds)} servers\n🖥️ {psutil.cpu_percent()}% CPU; {psutil.virtual_memory().percent}% RAM\n🏓 {round(self.bot.latency * 1000)} ms\n⬆️🕒 {text}\n👑 <@!{config.ownerID}>" ,color=discord.Color.blue())
+            f"🔢 In {len(self.bot.guilds)} servers\n🖥️ {psutil.cpu_percent()}% CPU; {psutil.virtual_memory().percent}% RAM\n🏓 {round(self.bot.latency * 1000)} ms\n🕒 {text}\n👑 <@!{config.ownerID}>" ,color=discord.Color.blue())
         em.set_footer(text=f"Bot User ID: {self.bot.user.id}")
         em.set_thumbnail(url=globalconfig.logo_url)
         await ctx.reply(embed=em, mention_author=False)
