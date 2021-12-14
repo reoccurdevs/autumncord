@@ -37,6 +37,7 @@ import globalconfig
 import asyncio
 import random
 import json
+import importlib
 from datetime import datetime
 from discord.ext import commands
 
@@ -269,16 +270,42 @@ bot.help_command = MyNewHelp()
 
 
 async def status_task():
+    try:
+        config.status
+    except:
+        with open("config.py", "a") as f:
+            f.write("\nstatus = 'online'\n")
+        importlib.reload(config)
     while True:
         bot.statusloop = True
-        await bot.change_presence(status=discord.Status.idle,
-                                  activity=discord.Game(f"in {len(bot.guilds)} servers with {len(bot.users)} users"))
-        await asyncio.sleep(20)
-        await bot.change_presence(status=discord.Status.idle,
-                                  activity=discord.Activity(type=discord.ActivityType.watching,
-                                                            name=f"for {config.prefix}help | "
-                                                                 f"v{str(globalconfig.version)}"))
-        await asyncio.sleep(20)
+        if config.status == "online":
+            await bot.change_presence(status=discord.Status.online,
+                                    activity=discord.Game(f"in {len(bot.guilds)} servers with {len(bot.users)} users"))
+            await asyncio.sleep(20)
+            await bot.change_presence(status=discord.Status.online,
+                                    activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                name=f"for {config.prefix}help | "
+                                                                    f"v{str(globalconfig.version)}"))
+            await asyncio.sleep(20)
+        elif config.status == "idle":
+            await bot.change_presence(status=discord.Status.idle,
+                                    activity=discord.Game(f"in {len(bot.guilds)} servers with {len(bot.users)} users"))
+            await asyncio.sleep(20)
+            await bot.change_presence(status=discord.Status.idle,
+                                    activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                name=f"for {config.prefix}help | "
+                                                                    f"v{str(globalconfig.version)}"))
+            await asyncio.sleep(20)
+        elif config.status == "dnd":
+            await bot.change_presence(status=discord.Status.dnd,
+                                    activity=discord.Game(f"in {len(bot.guilds)} servers with {len(bot.users)} users"))
+            await asyncio.sleep(20)
+            await bot.change_presence(status=discord.Status.dnd,
+                                    activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                name=f"for {config.prefix}help | "
+                                                                    f"v{str(globalconfig.version)}"))
+            await asyncio.sleep(20)
+
 
 
 @bot.event
@@ -293,6 +320,9 @@ async def on_ready():
     # await bot.change_presence(activity=discord.Game(name='v' + globalconfig.version + " | " + config.prefix + "help"))
     user = bot.get_user(int(config.ownerID))
     await user.send("The bot is back online.")
+    await bot.change_presence(status=discord.Status.online,
+                                  activity=discord.Game(f"restart successful!"))
+    await asyncio.sleep(15)
     if bot.statusloop is False:
         bot.loop.create_task(status_task())
     # await resetcommands()

@@ -937,7 +937,7 @@ class Utils(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def config(self, ctx, arg1=None, arg2=None, arg3=None, *, arg4=None):
         validsettings = ["detectghostpings", "prefix"]
-        validadminsettings = ["prefix"]
+        validadminsettings = ["prefix", "status"]
         if not os.path.exists("./data/guild/"):
             os.mkdir("./data/guild/")
         if not os.path.exists(f"./data/guild/{str(ctx.guild.id)}.json"):
@@ -984,26 +984,36 @@ class Utils(commands.Cog):
                 await ctx.send("That is not a valid setting.")
         elif arg1 == "admin":
             if arg2 == "list" or arg2 is None:
-                em = discord.Embed(title="This Server's Config", color=discord.Color.blue())
-                em.add_field(name="Current Settings", value=f'```py\nownerID: {config.ownerID}\nprefix: {config.prefix}\n```')
-                em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`prefix`")
+                em = discord.Embed(title="This bot's Config", color=discord.Color.blue())
+                em.add_field(name="Current Settings", value=f'```py\nownerID: {config.ownerID}\nprefix: {config.prefix}\nstatus: {config.status}\n```')
+                em.add_field(name="Changable Settings:", value=f"**Using this command:**\n`prefix`, `status`")
                 await ctx.reply(embed=em, mention_author=False)
             elif arg2 == "set":
                 for item in validadminsettings:
                     if arg3 == str(item):
                         validsetting = True
+                        setting = str(item)
                         break
                     else:
                         validsetting = False
                 if validsetting is True:
+                    if setting == "status":
+                        if setting != "idle" and setting != "dnd" and setting != "online":
+                            await ctx.send("That is not a valid option for `status`.\nYou can set `status` to `idle`, `dnd`, or `online`.")
+                            return
                     with open(f"config.py", "r") as f:
                         fr = f.read()
-                    fr = fr.replace(str(fr.split(f"{arg3} = '")[1]).split("'")[0], str(arg4))
+                    try:
+                        fr = fr.replace(str(fr.split(f"{arg3} = '")[1]).split("'")[0], str(arg4))
+                    except IndexError:
+                        await ctx.send("Appending new setting...")
+                        fr += f"\n{arg3} = '{arg4}'\n"
                     with open(f"config.py", "w") as f:
                         f.write(fr)
                     await ctx.send(f"{arg2} changed.")
                 elif validsetting is False:
                     await ctx.send("That is not a valid setting.")
+                    return
                 e = discord.Embed(title="Restart Required", description="The setting you have changed requires a restart to take effect. Would you like to restart now?")
                 msg = await ctx.send(embed=e)
                 emojilist = ["✅", "❌"]
