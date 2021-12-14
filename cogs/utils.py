@@ -998,7 +998,7 @@ class Utils(commands.Cog):
                         validsetting = False
                 if validsetting is True:
                     if setting == "status":
-                        if setting != "idle" and setting != "dnd" and setting != "online":
+                        if arg4 != "idle" and arg4 != "dnd" and arg4 != "online":
                             await ctx.send("That is not a valid option for `status`.\nYou can set `status` to `idle`, `dnd`, or `online`.")
                             return
                     with open(f"config.py", "r") as f:
