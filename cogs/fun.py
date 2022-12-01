@@ -35,16 +35,10 @@ sys.path.insert(0, "data/roleplay")
 
 
 async def getdata(query):
-    async with aiohttp.ClientSession() as s:
-        header = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"}
-        async with s.get(f"https://duckduckgo.com/?q={query}&iax=images&ia=images", headers=header) as response:
-            vqd = await response.text()
-            vqd = vqd.split("vqd='", 1)[1].split("';", 1)[0]
-            print(vqd)
-        async with s.get(f"https://duckduckgo.com/i.js?l=us-en&o=json&q={query}&vqd={vqd}&f=,,,,,&p=1",
-                         headers=header) as response:
-            r = await response.text()
-    return r
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://search.brave.com/api/images?q=" + query.replace(" ", "+")) as resp:
+            data = await resp.json()
+            return [im["properties"]["url"] for im in data["results"]]
 
 
 def getdetection(tempimage):
@@ -76,18 +70,6 @@ def getdetection(tempimage):
         detectreasons = "`No reasons found`"
     os.remove(tempimage)
     return detectreasons
-
-
-def getimages(query):
-    with requests.session() as s:
-        header = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"}
-        query = query.replace(" ", "+")
-        vqd = s.get(f"https://duckduckgo.com/?q={query}&iax=images&ia=images", headers=header).text.split("vqd='", 1)[
-            1].split("';", 1)[0]
-        foundjson = s.get(f"https://duckduckgo.com/i.js?l=us-en&o=json&q={query}&vqd={vqd}&f=,,,,,&p=1").text
-        s.close()
-        return foundjson
-
 
 async def downloadimage(url):
     if not os.path.exists("../cache"):
@@ -248,13 +230,13 @@ class Fun(commands.Cog):
     @commands.command(aliases=['img', 'findimage', 'fetchimage'])
     @commands.cooldown(1,5,commands.BucketType.user)
     async def image(self, ctx, *, query):
-        """Search for images using DuckDuckGo"""
+        """Search for images using Brave"""
         for file in os.listdir("./cache/"):
             file = file.split(".")[0]
-        json2 = json.loads(await getdata(query))
-        image = json2["results"][random.randint(0, len(json2["results"]))]["image"]
+        json2 = await getdata(query)
+        image = json2[random.randint(0, len(json2))]
         em = discord.Embed(color=discord.Color.purple())
-        em.set_author(name="DuckDuckGo Image Search", icon_url="https://files.reoccur.tech/ddg.png")
+        em.set_author(name="Brave Image Search", icon_url="https://files.reoccur.tech/ddg.png")
         em.set_image(url=image)
         em.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator}\nImage query: '{query}'",
                       icon_url=ctx.author.avatar_url)
@@ -636,15 +618,14 @@ class Fun(commands.Cog):
         em.add_field(name="NSFW Verdict", value=str(nsfw))
         em.add_field(name="NSFW Detection", value=f"{str(detection)}%")
         em.set_footer(icon_url=ctx.author.avatar_url, text=f"{ctx.author.name}#{ctx.author.discriminator}")
-        if censoredimage is not False:
-            try:
-                if 1 == 2:
-                    file = discord.File(censoredimage, filename="censoredimage.jpg")
-                    em.set_image(url="attachment://censoredimage.jpg")
-                    await message1.delete()
-                    await ctx.send(file=file, embed=em)
-            except UnboundLocalError:
-                pass
+        try:
+            if nsfw is True:
+                file = discord.File(censoredimage, filename="censoredimage.jpg")
+                em.set_image(url="attachment://censoredimage.jpg")
+                await message1.delete()
+                await ctx.send(file=file, embed=em)
+        except UnboundLocalError:
+            pass
         await message1.delete()
         await ctx.send(embed=em)
         os.remove(censoredimage)
