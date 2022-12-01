@@ -8,6 +8,7 @@
 
 import functools
 import config
+import globalconfig
 import random
 import aiohttp
 import discord  # removed "from discord import embeds", doesn't do anything
@@ -39,6 +40,7 @@ async def getdata(query):
         async with s.get(f"https://duckduckgo.com/?q={query}&iax=images&ia=images", headers=header) as response:
             vqd = await response.text()
             vqd = vqd.split("vqd='", 1)[1].split("';", 1)[0]
+            print(vqd)
         async with s.get(f"https://duckduckgo.com/i.js?l=us-en&o=json&q={query}&vqd={vqd}&f=,,,,,&p=1",
                          headers=header) as response:
             r = await response.text()
@@ -118,7 +120,6 @@ async def getunsafe(url):
     else:
         nsfw = False
         censoredimage = False
-        os.remove(tempimage)
         return nsfw, detection, tempimage
 
 
@@ -300,6 +301,7 @@ class Fun(commands.Cog):
                     embed.set_footer(text=f"{str(detection)}% certainty",
                                      icon_url="https://files.reoccur.tech/info_red.png")
                     await msg.edit(embed=embed)
+                os.remove(tempimage)
 
 
     @commands.command()
@@ -636,16 +638,16 @@ class Fun(commands.Cog):
         em.set_footer(icon_url=ctx.author.avatar_url, text=f"{ctx.author.name}#{ctx.author.discriminator}")
         if censoredimage is not False:
             try:
-                if bool(censoredimage):
+                if 1 == 2:
                     file = discord.File(censoredimage, filename="censoredimage.jpg")
                     em.set_image(url="attachment://censoredimage.jpg")
                     await message1.delete()
                     await ctx.send(file=file, embed=em)
             except UnboundLocalError:
                 pass
-        else:
-            await message1.delete()
-            await ctx.send(embed=em)
+        await message1.delete()
+        await ctx.send(embed=em)
+        os.remove(censoredimage)
 
     @commands.command()
     async def neko(self, ctx, choice=None, user: discord.User = None):

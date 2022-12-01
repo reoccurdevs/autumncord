@@ -493,7 +493,7 @@ async def on_command_error(ctx, error):
                   "time": str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))}
     bot.errors.append(dictionary)
     del dictionary
-    await ctx.reply(embed=em, mention_author=False, delete_after=5)
+    await ctx.send(embed=em, mention_author=False, delete_after=5)
 
 
 bot.run(config.bot_token)
