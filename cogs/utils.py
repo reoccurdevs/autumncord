@@ -328,7 +328,7 @@ class Utils(commands.Cog):
             await ctx.send(embed=em)
 
     @commands.command()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 3, commands.BucketType.user)
     async def admin(self, ctx, choice=None, arg1=None, arg2=None, *, arg3=None):
         """Bot owner only commands. Run without any arguments to see the help on it."""
         if str(ctx.message.author.id) == config.ownerID:

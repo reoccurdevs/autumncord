@@ -68,7 +68,8 @@ def getdetection(tempimage):
         detectreasons = "`No reasons found`"
     if str(detectreasons) == "[]":
         detectreasons = "`No reasons found`"
-    os.remove(tempimage)
+    #os.remove(tempimage)
+    print(detectreasons)
     return detectreasons
 
 async def downloadimage(url):
@@ -236,7 +237,7 @@ class Fun(commands.Cog):
         json2 = await getdata(query)
         image = json2[random.randint(0, len(json2))]
         em = discord.Embed(color=discord.Color.purple())
-        em.set_author(name="Brave Image Search", icon_url="https://files.reoccur.tech/ddg.png")
+        em.set_author(name="Brave Image Search", icon_url="https://cdn.reoccur.cat/autumn/bravesearch.png")
         em.set_image(url=image)
         em.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator}\nImage query: '{query}'",
                       icon_url=ctx.author.avatar_url)
@@ -246,20 +247,20 @@ class Fun(commands.Cog):
             nsfw, detection, tempimage = await getunsafe(image)
             if nsfw is True:
                 embed = discord.Embed(title="Possible NSFW Blocked!", color=discord.Color.dark_magenta())
-                embed.set_author(name="NSFW Detector", icon_url="https://files.reoccur.tech/loading_red.gif")
+                embed.set_author(name="NSFW Detector", icon_url="https://cdn.reoccur.cat/autumn/loading_red.gif")
                 embed.add_field(name="What is this?",
                                 value="This bot automatically finds and blocks NSFW (Not Safe For Work) content. This "
                                       "content was detected as NSFW."
                                 )
                 embed.add_field(name="Detection Reason(s)", value="`Fetching details...`", inline=False)
                 embed.set_footer(text=f"{str(detection)}% certainty",
-                                 icon_url="https://files.reoccur.tech/info_red.png")
+                                 icon_url="https://cdn.reoccur.cat/autumn/info_red.png")
                 await msg.delete()
                 msg = await ctx.reply(embed=embed, mention_author=False)
                 detectreasons = await loop.run_in_executor(None, functools.partial(getdetection, tempimage))
                 if detectreasons == "`No reasons found`":
                     embed = discord.Embed(title="Possible NSFW Blocked!", color=discord.Color.orange())
-                    embed.set_author(name="NSFW Detector", icon_url="https://files.reoccur.tech/warning_amber.png")
+                    embed.set_author(name="NSFW Detector", icon_url="https://cdn.reoccur.cat/autumn/warning_amber.png")
                     embed.add_field(name="What is this?",
                                     value="This bot automatically finds and blocks NSFW (Not Safe For Work) content. "
                                           "This content was detected as NSFW."
@@ -270,20 +271,21 @@ class Fun(commands.Cog):
                                          "*__Proceed at your own risk.__*", inline=False)
                     embed.add_field(name="Detected Image", value=f"`{str(image)}`", inline=False)
                     embed.set_footer(text=f"{str(detection)}% certainty",
-                                     icon_url="https://files.reoccur.tech/info_red.png")
+                                     icon_url="https://cdn.reoccur.cat/autumn/info_red.png")
                     await msg.edit(embed=embed)
+                    os.remove(tempimage)
                 else:
                     embed = discord.Embed(title="NSFW Blocked!", color=discord.Color.red())
-                    embed.set_author(name="NSFW Detector", icon_url="https://files.reoccur.tech/warning_red.png")
+                    embed.set_author(name="NSFW Detector", icon_url="https://cdn.reoccur.cat/autumn/warning_red.png")
                     embed.add_field(name="What is this?",
                                     value="This bot automatically finds and blocks NSFW (Not Safe For Work) content. "
                                           "This content was detected as NSFW."
                                     )
                     embed.add_field(name="Detection Reason(s)", value="\n".join(detectreasons), inline=False)
                     embed.set_footer(text=f"{str(detection)}% certainty",
-                                     icon_url="https://files.reoccur.tech/info_red.png")
+                                     icon_url="https://cdn.reoccur.cat/autumn/info_red.png")
                     await msg.edit(embed=embed)
-                os.remove(tempimage)
+                    os.remove(tempimage)
 
 
     @commands.command()
@@ -611,23 +613,24 @@ class Fun(commands.Cog):
             nsfw, detection, censoredimage = await getunsafe(link)
         if nsfw is True:
             em = discord.Embed(color=discord.Color.red())
-            em.set_author(icon_url="https://rc.reoccur.tech/assets/alert.png", name="Image Analyzer")
+            em.set_author(icon_url="https://cdn.reoccur.cat/autumn/warning_red.png", name="Image Analyzer")
         else:
             em = discord.Embed(color=discord.Color.green())
-            em.set_author(icon_url="https://rc.reoccur.tech/assets/checkmark.png", name="Image Analyzer")
+            em.set_author(icon_url="https://cdn.reoccur.cat/autumn/green_check.png", name="Image Analyzer")
         em.add_field(name="NSFW Verdict", value=str(nsfw))
         em.add_field(name="NSFW Detection", value=f"{str(detection)}%")
         em.set_footer(icon_url=ctx.author.avatar_url, text=f"{ctx.author.name}#{ctx.author.discriminator}")
         try:
-            if nsfw is True:
+            if nsfw is False:
                 file = discord.File(censoredimage, filename="censoredimage.jpg")
                 em.set_image(url="attachment://censoredimage.jpg")
                 await message1.delete()
                 await ctx.send(file=file, embed=em)
+            elif nsfw is True:
+                await message1.delete()
+                await ctx.send(embed=em)
         except UnboundLocalError:
             pass
-        await message1.delete()
-        await ctx.send(embed=em)
         os.remove(censoredimage)
 
     @commands.command()
