@@ -1,4 +1,4 @@
-# Copyright (C) 2021-present reoccurcat
+# Copyright (C) 2021-present reoccurcat (representing reoccurtech)
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -248,7 +248,7 @@ class Utils(commands.Cog):
         parsed = vt_json_parsing(response)
         if parsed == -1:
             new_embed = discord.Embed(
-                title="Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage.",
+                title="Something went wrong. Could be that you did not add the http/https prefix at the beginning of the webpage?",
                 color=discord.Color.red())
             # await ctx.reply(embed = em)
             await msg.edit(embed=new_embed)
@@ -348,11 +348,10 @@ class Utils(commands.Cog):
                     src = './tmp/freeupdate/cogs'
                     dest = dir_path + "/cogs"
                     destination = shutil.copytree(src, dest)
-                    copyfile('./tmp/freeupdate/bot.py', dir_path + '/bot.py')
-                    copyfile('./tmp/freeupdate/setup.py', dir_path + '/setup.py')
-                    copyfile('./tmp/freeupdate/README.md', dir_path + '/README.md')
-                    copyfile('./tmp/freeupdate/globalconfig.py', dir_path + '/globalconfig.py')
-                    copyfile('./tmp/freeupdate/start.py', dir_path + '/start.py')
+                    tmpfiles = (file for file in os.listdir(src) 
+                        if os.path.isfile(os.path.join(src, file)))
+                    for file in tmpfiles:
+                        copyfile(file, dir_path)
                     shutil.rmtree('./tmp/freeupdate')
                     print("Done! Restart the bot to apply the changes!")
                     em = discord.Embed(title="Updated!",
