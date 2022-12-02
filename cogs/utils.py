@@ -348,10 +348,15 @@ class Utils(commands.Cog):
                     src = './tmp/freeupdate/cogs'
                     dest = dir_path + "/cogs"
                     destination = shutil.copytree(src, dest)
-                    tmpfiles = (file for file in os.listdir(src) 
-                        if os.path.isfile(os.path.join(src, file)))
-                    for file in tmpfiles:
-                        copyfile(file, dir_path)
+                    copyfile('./tmp/freeupdate/.gitignore', dir_path + '/.gitignore')
+                    copyfile('./tmp/freeupdate/bot.py', dir_path + '/bot.py')
+                    copyfile('./tmp/freeupdate/globalconfig.py', dir_path + '/globalconfig.py')
+                    copyfile('./tmp/freeupdate/LICENSE', dir_path + '/LICENSE')
+                    copyfile('./tmp/freeupdate/README.md', dir_path + '/README.md')
+                    copyfile('./tmp/freeupdate/requirements.txt', dir_path + '/requirements.txt')
+                    copyfile('./tmp/freeupdate/SECURITY.md', dir_path + '/SECURITY.md')
+                    copyfile('./tmp/freeupdate/setup.py', dir_path + '/setup.py')
+                    copyfile('./tmp/freeupdate/start.py', dir_path + '/start.py')
                     shutil.rmtree('./tmp/freeupdate')
                     print("Done! Restart the bot to apply the changes!")
                     em = discord.Embed(title="Updated!",
